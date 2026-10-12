@@ -1,0 +1,33 @@
+GitHub + Render 배포 가이드 - 종목선택 5개 완성
+
+GitHub: kim1303/mnq-v21-server
+
+1. GitHub 업로드 (이 폴더의 모든 파일):
+   - app.py (Flask 서버 - /final_form + /api/holdings)
+   - Qqq_List_Final_Registered.html (최종이용자 고정폼 - 종목선택 5개)
+   - final_form.html (동일)
+   - requirements.txt
+   - Procfile
+   - holdings.json
+
+2. Render.com:
+   - Dashboard -> New Web Service
+   - Connect GitHub: kim1303/mnq-v21-server
+   - Build Command: pip install -r requirements.txt
+   - Start Command: gunicorn app:app
+   - Environment: PORT=10000 (자동)
+   - Deploy
+
+3. 배포 완료 후 URL:
+   https://mnq-v21-server.onrender.com/final_form
+   - 핸드폰 텔레그램에서 매매창 열기 버튼으로 열림
+   - 종목선택 버튼 -> 보유 5개 List + 추가 입력 (이름/번호)
+
+4. 텔레그램 봇:
+   python TELEGRAM_FINAL_MOBILE.py
+   - 채널 -1004340608403에 매매창 열기 버튼 전송
+   - 최종이용자 핸드폰에서 매매창 열기 -> Qqq List 폼 보임
+
+테스트:
+   curl https://mnq-v21-server.onrender.com/api/holdings
+   -> 보유 종목 5개 조회

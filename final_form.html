@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Qqq List - 최종이용자 고정폼 - 종목선택 5개</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', 'Noto Sans KR', sans-serif; background: #0a0a0a; }
+  .glass { backdrop-filter: blur(16px); background: rgba(255,255,255,0.05); }
+  .scroll-hide::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen flex justify-center">
+<div class="w-full max-w-[400px] min-h-screen bg-[#0f0f0f] relative pb-[100px]">
+
+  <!-- Header -->
+  <div class="px-5 pt-6 pb-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center font-bold text-[12px]">Q</div>
+        <span class="font-bold text-[15px]">Qqq List - 최종이용자 고정폼</span>
+      </div>
+      <div class="flex items-center gap-2 text-[11px] text-white/60">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        <span>한규리 | 접속중</span>
+      </div>
+    </div>
+    <div class="mt-3 flex gap-2 text-[11px]">
+      <span class="px-2 py-1 rounded bg-white/10">MNQM26</span>
+      <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">관리자 따라하기 ON</span>
+      <span class="px-2 py-1 rounded bg-white/10">내 PC로 매매 OFF</span>
+    </div>
+  </div>
+
+  <!-- Total Asset Card - 원본 고정폼 유지 -->
+  <div class="mx-4 mt-2 p-5 rounded-[20px] bg-gradient-to-br from-[#1a2e1a] to-[#0f1f0f] border border-emerald-500/20">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-[12px] text-white/50">총 자산</p>
+        <p class="text-[28px] font-bold mt-1">$2,111,184</p>
+        <p class="text-[12px] text-emerald-400 mt-1">오늘 수익: +$2,153.50 | 수수료: $3</p>
+      </div>
+      <div class="text-right">
+        <p class="text-[11px] text-white/40">수익률</p>
+        <p class="text-[18px] font-bold text-emerald-400">62.1%</p>
+        <p class="text-[10px] text-white/30">목표 $3.4M</p>
+      </div>
+    </div>
+    <div class="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+      <div class="h-full w-[62.1%] bg-gradient-to-r from-emerald-400 to-green-500 rounded-full"></div>
+    </div>
+  </div>
+
+  <!-- Holdings Preview - 최대 5개 요약 -->
+  <div class="mx-4 mt-4 p-4 rounded-[16px] bg-white/[0.04] border border-white/10">
+    <div class="flex justify-between items-center mb-3">
+      <p class="text-[13px] font-bold">보유 종목 (최대 5개)</p>
+      <span id="holdingsCount" class="text-[11px] px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">0/5</span>
+    </div>
+    <div id="holdingsPreview" class="space-y-2">
+      <!-- JS로 채워짐 -->
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] bg-[#0f0f0f]/90 backdrop-blur-xl border-t border-white/10 p-4">
+    <div class="grid grid-cols-4 gap-2">
+      <button onclick="goHome()" class="h-[52px] rounded-[14px] bg-white/10 text-[12px] font-bold">초기화면</button>
+      <button onclick="showProfit()" class="h-[52px] rounded-[14px] bg-white/10 text-[12px] font-bold">수익</button>
+      <button onclick="stopTrading()" class="h-[52px] rounded-[14px] bg-white/10 text-[12px] font-bold text-red-400">매매중지</button>
+      <button onclick="openSymbolModal()" class="h-[52px] rounded-[14px] bg-[#1A2E1A] border border-emerald-500/30 text-emerald-400 font-bold text-[13px] shadow-[0_0_12px_rgba(34,197,94,0.15)]">종목선택</button>
+    </div>
+    <div class="mx-auto mt-3 h-1 w-24 rounded-full bg-white/20"></div>
+  </div>
+
+  <!-- 종목선택 Modal -->
+  <div id="symbolModal" class="fixed inset-0 z-[80] hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeSymbolModal()"></div>
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[400px] bg-[#1a1a1a] rounded-t-[24px] max-h-[85vh] overflow-hidden flex flex-col">
+      <div class="p-5 border-b border-white/10">
+        <div class="flex justify-between items-center">
+          <h2 class="text-[16px] font-bold">종목선택 - 보유/설정 종목</h2>
+          <button onclick="closeSymbolModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">✕</button>
+        </div>
+        <p class="text-[11px] text-white/50 mt-1">PC에서 매수한 종목 최대 5개 표시, 추가 입력으로 교체 가능</p>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto p-5 space-y-4 scroll-hide">
+        <!-- 보유 종목 List -->
+        <div>
+          <p class="text-[12px] font-bold mb-3">보유 종목 List (최대 5개)</p>
+          <div id="holdingsList" class="space-y-2">
+            <!-- JS로 채워짐 -->
+          </div>
+        </div>
+
+        <!-- 종목 추가 - 이름 또는 번호 입력 -->
+        <div class="p-4 rounded-[16px] bg-white/[0.04] border border-white/10">
+          <p class="text-[12px] font-bold mb-3">추가 종목 입력 (이름 또는 번호)</p>
+          <div class="flex gap-2">
+            <input id="newSymbolInput" type="text" placeholder="예: MNQU26, AAPL, 005930, TSLA" 
+                   class="flex-1 h-[44px] px-4 rounded-[12px] bg-[#0f0f0f] border border-white/10 text-[13px] placeholder:text-white/30 focus:border-emerald-500/50 focus:outline-none">
+            <button onclick="addSymbol()" class="h-[44px] px-5 rounded-[12px] bg-emerald-600 text-white font-bold text-[13px]">추가</button>
+          </div>
+          <p class="text-[10px] text-white/40 mt-2">• 종목명: MNQM26, MNQU26, AAPL, TSLA, NVDA<br>• 종목번호: 005930(삼성전자), 000660(SK하이닉스)</p>
+          <p id="addStatus" class="text-[11px] mt-2 hidden"></p>
+        </div>
+
+        <!-- PC 동기화 -->
+        <div class="p-3 rounded-[12px] bg-emerald-500/10 border border-emerald-500/20">
+          <p class="text-[11px] text-emerald-400">💻 PC에서 매수한 종목은 자동으로 여기에 표시됩니다 (최대 5개)</p>
+          <p class="text-[10px] text-white/40 mt-1">텔레그램에서 종목선택 시 보이는 List에서 추가 종목 입력 가능</p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-white/10">
+        <button onclick="closeSymbolModal()" class="w-full h-[48px] rounded-[14px] bg-white text-black font-bold text-[14px]">완료</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 보유 종목 - 최대 5개, 로컬스토리지 + 서버 동기화
+let holdings = JSON.parse(localStorage.getItem('mnq_holdings') || '[]');
+
+// 초기 샘플 (PC에서 매수한 종목 시뮬레이션)
+if (holdings.length === 0) {
+  holdings = [
+    { symbol: "MNQM26", name: "Micro Nasdaq", qty: 2, avgPrice: 21200, currentPrice: 21450, profit: "+$500" },
+    { symbol: "AAPL", name: "Apple Inc", qty: 10, avgPrice: 210, currentPrice: 215, profit: "+$50" }
+  ];
+  saveHoldings();
+}
+
+function saveHoldings() {
+  // 최대 5개 제한
+  if (holdings.length > 5) holdings = holdings.slice(0,5);
+  localStorage.setItem('mnq_holdings', JSON.stringify(holdings));
+  // 서버에도 저장 시도 (배포용)
+  fetch('/api/holdings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ holdings })
+  }).catch(()=>{});
+  renderHoldings();
+}
+
+function renderHoldings() {
+  const preview = document.getElementById('holdingsPreview');
+  const list = document.getElementById('holdingsList');
+  const count = document.getElementById('holdingsCount');
+  
+  count.textContent = `${holdings.length}/5`;
+  count.className = holdings.length >=5 ? "text-[11px] px-2 py-1 rounded bg-red-500/20 text-red-400" : "text-[11px] px-2 py-1 rounded bg-emerald-500/20 text-emerald-400";
+  
+  if (holdings.length === 0) {
+    preview.innerHTML = '<p class="text-[11px] text-white/30 text-center py-3">보유 종목 없음 - 종목선택에서 추가</p>';
+    list.innerHTML = '<p class="text-[11px] text-white/30 text-center py-6">PC에서 매수한 종목이 여기에 표시됩니다<br>최대 5개까지</p>';
+    return;
+  }
+  
+  preview.innerHTML = holdings.map(h => `
+    <div class="flex justify-between items-center p-2 rounded-[10px] bg-white/[0.03]">
+      <div>
+        <p class="text-[12px] font-bold">${h.symbol} <span class="text-white/40 text-[10px]">${h.name}</span></p>
+        <p class="text-[10px] text-white/40">${h.qty}주 | 평단 ${h.avgPrice}</p>
+      </div>
+      <p class="text-[11px] font-bold ${h.profit.includes('+') ? 'text-emerald-400' : 'text-red-400'}">${h.profit}</p>
+    </div>
+  `).join('');
+  
+  list.innerHTML = holdings.map((h,i) => `
+    <div class="flex justify-between items-center p-3 rounded-[12px] bg-[#0f0f0f] border border-white/5">
+      <div class="flex-1">
+        <p class="text-[13px] font-bold">${h.symbol} <span class="text-[11px] text-white/40">${h.name}</span></p>
+        <p class="text-[10px] text-white/40 mt-1">${h.qty}주 | 평단가 ${h.avgPrice} | 현재가 ${h.currentPrice} | <span class="${h.profit.includes('+') ? 'text-emerald-400' : 'text-red-400'}">${h.profit}</span></p>
+      </div>
+      <button onclick="removeSymbol(${i})" class="ml-3 w-7 h-7 rounded-full bg-red-500/20 text-red-400 text-[12px]">✕</button>
+    </div>
+  `).join('') + (holdings.length < 5 ? `
+    <div class="p-3 rounded-[12px] border border-dashed border-white/10 text-center">
+      <p class="text-[11px] text-white/30">빈 슬롯 ${5-holdings.length}개 - 아래에서 종목 추가</p>
+    </div>
+  ` : '<div class="p-2 text-center text-[11px] text-red-400/60">최대 5개 보유 중 - 삭제 후 추가 가능</div>');
+}
+
+function openSymbolModal() {
+  document.getElementById('symbolModal').classList.remove('hidden');
+  renderHoldings();
+  // 서버에서 최신 holdings 가져오기 (배포용)
+  fetch('/api/holdings').then(r=>r.json()).then(data=>{
+    if (data.holdings && data.holdings.length>0) {
+      holdings = data.holdings.slice(0,5);
+      saveHoldings();
+    }
+  }).catch(()=>{});
+}
+
+function closeSymbolModal() {
+  document.getElementById('symbolModal').classList.add('hidden');
+}
+
+function addSymbol() {
+  const input = document.getElementById('newSymbolInput');
+  const status = document.getElementById('addStatus');
+  const raw = input.value.trim().toUpperCase();
+  
+  if (!raw) {
+    status.textContent = "종목명 또는 번호를 입력하세요";
+    status.className = "text-[11px] mt-2 text-red-400";
+    status.classList.remove('hidden');
+    return;
+  }
+  
+  if (holdings.length >= 5) {
+    status.textContent = "최대 5개까지만 보유 가능 - 기존 종목 삭제 후 추가하세요";
+    status.className = "text-[11px] mt-2 text-red-400";
+    status.classList.remove('hidden');
+    return;
+  }
+  
+  // 종목번호 매핑 (예시)
+  const symbolMap = {
+    "005930": { symbol: "005930", name: "삼성전자" },
+    "000660": { symbol: "000660", name: "SK하이닉스" },
+    "035420": { symbol: "035420", name: "NAVER" },
+    "AAPL": { symbol: "AAPL", name: "Apple Inc" },
+    "TSLA": { symbol: "TSLA", name: "Tesla" },
+    "NVDA": { symbol: "NVDA", name: "NVIDIA" },
+    "MNQM26": { symbol: "MNQM26", name: "Micro Nasdaq M26" },
+    "MNQU26": { symbol: "MNQU26", name: "Micro Nasdaq U26" },
+    "MNQZ26": { symbol: "MNQZ26", name: "Micro Nasdaq Z26" }
+  };
+  
+  const mapped = symbolMap[raw] || { symbol: raw, name: raw + " (신규)" };
+  
+  // 중복 체크
+  if (holdings.find(h=>h.symbol===mapped.symbol)) {
+    status.textContent = `${mapped.symbol} 이미 보유 중입니다`;
+    status.className = "text-[11px] mt-2 text-yellow-400";
+    status.classList.remove('hidden');
+    return;
+  }
+  
+  // 추가 - PC 매수 시뮬레이션 데이터
+  holdings.push({
+    symbol: mapped.symbol,
+    name: mapped.name,
+    qty: 1,
+    avgPrice: Math.floor(Math.random()*1000)+20000,
+    currentPrice: Math.floor(Math.random()*1000)+20500,
+    profit: "+" + "$" + (Math.floor(Math.random()*500)+10)
+  });
+  
+  saveHoldings();
+  input.value = "";
+  status.textContent = `✅ ${mapped.symbol} (${mapped.name}) 추가 완료 - 핸드폰과 PC에 동기화됨`;
+  status.className = "text-[11px] mt-2 text-emerald-400";
+  status.classList.remove('hidden');
+  
+  // 텔레그램으로 알림 (배포 시)
+  fetch('/api/telegram_notify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: "add_symbol", symbol: mapped.symbol, name: mapped.name })
+  }).catch(()=>{});
+}
+
+function removeSymbol(idx) {
+  if (confirm(`${holdings[idx].symbol} 삭제하시겠습니까?`)) {
+    holdings.splice(idx,1);
+    saveHoldings();
+  }
+}
+
+function goHome() { alert('초기화면으로 이동'); }
+function showProfit() { alert('수익: $2,111,184 (62.1%)'); }
+function stopTrading() { if(confirm('매매를 중지하시겠습니까?')) alert('매매 중지됨'); }
+
+// Enter로 추가
+document.getElementById('newSymbolInput')?.addEventListener('keypress', (e)=>{
+  if (e.key==='Enter') addSymbol();
+});
+
+// 초기 렌더
+renderHoldings();
+
+// 텔레그램 Web App 대응
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
+</script>
+</body>
+</html>

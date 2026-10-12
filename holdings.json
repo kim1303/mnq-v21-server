@@ -1,0 +1,18 @@
+[
+  {
+    "symbol": "MNQM26",
+    "name": "Micro Nasdaq M26",
+    "qty": 2,
+    "avgPrice": 21200,
+    "currentPrice": 21450,
+    "profit": "+$500"
+  },
+  {
+    "symbol": "AAPL",
+    "name": "Apple Inc",
+    "qty": 10,
+    "avgPrice": 210,
+    "currentPrice": 215,
+    "profit": "+$50"
+  }
+]
