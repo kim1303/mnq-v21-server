@@ -166,6 +166,20 @@ def test_telegram():
         "telegram_full_response": resp
     })
 
+@app.route("/api/set-webhook")
+def set_webhook():
+    """텔레그램 봇 웹훅 설정 - 매매 확인 버튼 작동에 필요"""
+    webhook_url = f"https://{request.host}/telegram-webhook"
+    resp = tg_api("setWebhook", {"url": webhook_url})
+    info = tg_api("getWebhookInfo", {})
+    return jsonify({
+        "ok": resp.get("ok", False),
+        "setWebhook_response": resp,
+        "webhookInfo": info,
+        "webhook_url": webhook_url,
+        "next": "텔레그램에서 @mnq_signal_2026_bot 에게 /start 입력하면 하단에 '매매 확인' 버튼 생성됨"
+    })
+
 @app.route("/api/setup-keyboard", methods=["GET","POST"])
 def setup_keyboard():
     """그림처럼 '매매 확인' 고정 버튼 생성 - 채널에 고정 메시지 + 봇 웹훅 설정"""
