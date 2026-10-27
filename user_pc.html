@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MY PC 매매 - 최종 통합본 - 접기펼치기 + 시스템감시</title>
+<style>
+body{background:#0f0f11;color:#fff;font-family:Malgun Gothic;margin:0;padding:12px}
+.card{background:#1a1a1a;border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid #2a2a2a}
+.list-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #25262f}
+.list-row:last-child{border-bottom:none}
+.list-label{font-size:14px;font-weight:600}
+.list-sub{font-size:11px;color:#888;margin-top:3px}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold}
+.badge-green{background:#22c55e;color:#000}
+.badge-red{background:#ef4444;color:#fff}
+.badge-yellow{background:#f59e0b;color:#000}
+.badge-blue{background:#3b82f6;color:#fff}
+.badge-gray{background:#3a3d4a;color:#fff}
+.private{background:#22c55e;color:#000;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:bold}
+.input{background:#262831;border:1px solid #3a3d4a;border-radius:10px;padding:10px;color:#fff;width:100%;box-sizing:border-box}
+.profit{color:#facc15;font-weight:bold}
+.profit-box{background:#262831;border-radius:10px;padding:12px;margin-top:10px}
+.flex{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:13px}
+.flex:last-child{border-bottom:none}
+.toggle{position:relative;width:62px;height:30px;appearance:none;background:#3a3d4a;border-radius:30px;cursor:pointer;transition:0.3s;outline:none;flex-shrink:0}
+.toggle:checked{background:#22c55e}
+.toggle::before{content:"";position:absolute;width:26px;height:26px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.3);z-index:2}
+.toggle:checked::before{transform:translateX(32px)}
+.toggle::after{content:"OFF";position:absolute;top:50%;right:8px;transform:translateY(-50%);font-size:10px;font-weight:bold;color:#aaa;transition:0.3s;z-index:1}
+.toggle:checked::after{content:"ON";left:10px;right:auto;color:#000}
+.toggle.copy:checked{background:#f59e0b}
+.toggle.tele:checked{background:#3b82f6}
+.toggle.loss:checked{background:#ef4444}
+.toggle.reapply{background:#3a3d4a;border:2px solid #facc15;animation:reapplyPulse 2s infinite}
+.toggle.reapply:checked{background:#facc15;animation:none}
+.toggle.reapply::after{content:"OFF";color:#facc15}
+.toggle.reapply:checked::after{content:"ON";color:#000}
+@keyframes reapplyPulse{0%{box-shadow:0 0 0 0 rgba(250,204,21,0.4)}70%{box-shadow:0 0 0 8px rgba(250,204,21,0)}100%{box-shadow:0 0 0 0 rgba(250,204,21,0)}}
+.toggle.sub{width:52px;height:26px}
+.toggle.sub::before{width:22px;height:22px}
+.toggle.sub:checked::before{transform:translateX(26px)}
+.toggle.sub::after{font-size:9px;right:6px}
+.toggle.sub:checked::after{left:8px}
+.remain-bar{height:8px;background:#262831;border-radius:8px;overflow:hidden;margin-top:8px}
+.remain-fill{height:100%;background:linear-gradient(90deg,#22c55e,#facc15);transition:width 0.5s}
+.sub-toggle-row{display:flex;justify-content:space-between;align-items:center;background:#1f1f25;border:1px solid #2a2a35;border-radius:10px;padding:10px 12px;margin-top:8px}
+.sub-toggle-label{font-size:12px;font-weight:600}
+.sub-toggle-sub{font-size:10px;color:#888;margin-top:2px}
+.collapsed-summary{background:linear-gradient(90deg,#1f2a1f,#1f1f25);border:1px solid #2a4a2a;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:0.2s;margin-top:12px}
+.collapsed-summary:hover{border-color:#22c55e;transform:translateY(-1px)}
+.collapsed-left{display:flex;flex-direction:column}
+.collapsed-title{font-size:13px;font-weight:bold;color:#22c55e;display:flex;align-items:center;gap:6px}
+.collapsed-values{font-size:11px;color:#888;margin-top:3px}
+.collapsed-right{display:flex;align-items:center;gap:8px}
+.expand-btn{background:#262831;border:1px solid #3a3d4a;border-radius:20px;padding:6px 12px;font-size:11px;color:#fff;cursor:pointer}
+.log-container{background:#0f0f11;border:1px solid #2a2a35;border-radius:12px;padding:10px;height:240px;overflow-y:auto;font-family:Consolas,monospace;font-size:11px;line-height:1.6;margin-top:10px}
+.log-entry{padding:4px 6px;border-radius:6px;margin-bottom:3px;display:flex;gap:6px;align-items:flex-start}
+.log-entry.error{background:#2a1a1a;border-left:3px solid #ef4444}
+.log-entry.warn{background:#2a2410;border-left:3px solid #facc15}
+.log-entry.network{background:#1a1f2a;border-left:3px solid #3b82f6}
+.log-entry.system{background:#1f1a2a;border-left:3px solid #a855f7}
+.log-entry.telegram{background:#1a2a1f;border-left:3px solid #22c55e}
+.log-time{color:#666;white-space:nowrap;min-width:80px;font-size:10px}
+.log-type{padding:1px 5px;border-radius:8px;font-size:9px;font-weight:bold;white-space:nowrap}
+.log-type.NETWORK{background:#1e3a8a;color:#93c5fd}
+.log-type.SYSTEM{background:#4c1d95;color:#c4b5fd}
+.log-type.TELEGRAM{background:#14532d;color:#86efac}
+.log-type.ERROR{background:#7f1d1d;color:#fca5a5}
+.log-type.WARN{background:#78350f;color:#fde68a}
+.log-msg{color:#ddd;flex:1;word-break:break-all}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;margin-bottom:8px}
+.filter-btn{padding:5px 10px;border-radius:20px;border:1px solid #3a3d4a;background:#262831;color:#888;font-size:10px;cursor:pointer}
+.filter-btn.active{background:#22c55e;color:#000;border-color:#22c55e;font-weight:bold}
+.search-row{display:flex;gap:6px;margin-top:10px}
+.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px}
+.status-box{background:#1f1f25;border-radius:8px;padding:8px;text-align:center;border:1px solid #2a2a35}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px}
+.dot-green{background:#22c55e;box-shadow:0 0 6px #22c55e}
+.dot-red{background:#ef4444;box-shadow:0 0 6px #ef4444}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.input-1-3{flex:0 0 33%;max-width:33%}
+.slider-2-3{flex:1 1 67%;-webkit-appearance:none;appearance:none;height:6px;background:#262831;border-radius:3px;outline:none;border:1px solid #3a3d4a}
+.slider-2-3::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:#22c55e;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(34,197,94,0.4);border:2px solid #1a1a1a;transition:0.2s}
+.slider-2-3::-webkit-slider-thumb:hover{transform:scale(1.2);box-shadow:0 0 10px #22c55e}
+.slider-2-3::-moz-range-thumb{width:18px;height:18px;background:#22c55e;border-radius:50%;cursor:pointer;border:2px solid #1a1a1a}
+.slider-blue::-webkit-slider-thumb{background:#3b82f6;box-shadow:0 2px 6px rgba(59,130,246,0.4)}
+.slider-red::-webkit-slider-thumb{background:#ef4444;box-shadow:0 2px 6px rgba(239,68,68,0.4)}
+.input-slider-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;background:#1f1f25;border:1px solid #2a2a35;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.toggle-label{font-size:12px;font-weight:600}
+.toggle-sub{font-size:10px;color:#888;margin-top:2px}
+.disabled{opacity:0.35;pointer-events:none}
+.field-group{margin-bottom:0}
+
+</style>
+</head>
+<body>
+
+
+<div class="card" style="border:1px solid #3b82f6">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><b id="uName">User</b> <span id="uAccount" style="color:#888">/ 자동인식중...</span> <span class="private">본인만</span></div>
+<div><span id="totalProfit" style="font-size:20px;color:#60a5fa;font-weight:bold">$0.00</span></div>
+</div>
+<div style="font-size:11px;color:#888;margin-top:6px">MNQM26 / 계좌 자동 인식 → 텔레그램/수익관리 / 당일 최대손실 정지</div>
+<div style="margin-top:12px;background:linear-gradient(90deg,#1a2332,#1f1f25);border-radius:10px;padding:12px;border:1px solid #2a3a5a;display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;flex-direction:column">
+<div style="font-size:10px;color:#888">현재 매매상태</div>
+<div style="font-size:11px;color:#666;margin-top:2px" id="topStatusDetail">내 PC 신호로 매매중</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<span id="topStatusBadge" class="badge badge-blue" style="font-size:12px;padding:6px 14px">내 PC 신호매매</span>
+<span id="topStatusDot" style="width:10px;height:10px;background:#3b82f6;border-radius:50%;display:inline-block;box-shadow:0 0 8px #3b82f6;animation:blink 2s infinite"></span>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="card">
+<div style="font-weight:bold;font-size:15px;margin-bottom:12px">⚙️ 이용자 설정 - 토글 리스트</div>
+
+<div class="list-row">
+<div>
+<div class="list-label">매매중 / 매매정지</div>
+<div class="list-sub" id="tradeSub">현재: 매매중</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<span id="tradeBadge" class="badge badge-green">매매중</span>
+<input type="checkbox" class="toggle" id="tradeToggle" checked onchange="toggleTrade()">
+</div>
+</div>
+
+<div class="list-row">
+<div>
+<div class="list-label">관리자복제매매 / 내 PC 신호매매</div>
+<div class="list-sub" id="copySub">현재: 내 PC 신호로 매매</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<span id="copyBadge" class="badge badge-blue">내 PC 신호</span>
+<input type="checkbox" class="toggle copy" id="copyToggle" onchange="toggleCopyMode()">
+</div>
+</div>
+
+<div class="list-row">
+<div>
+<div class="list-label">텔레그램 활성화</div>
+<div class="list-sub" id="tgSub">ON: 텔레그램 신호 전송</div>
+<!-- OFF 문구: OFF :  핸드폰의 텔레그램 과 연동이 중지 됩니다. -->
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<span id="tgBadge" class="badge badge-blue">ON</span>
+<input type="checkbox" class="toggle tele" id="tgToggle" checked onchange="toggleTelegram()">
+</div>
+</div>
+
+<div class="list-row" style="flex-direction:column;align-items:stretch">
+<div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+<div>
+<div class="list-label" id="lossSub" style="font-size:14px">ON: 하루 최대 손실 도달 시 당일 매매 정지</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<input type="checkbox" class="toggle loss" id="lossToggle" checked onchange="toggleLoss()">
+</div>
+</div>
+
+<div id="lossCollapsed" class="collapsed-summary" style="display:none" onclick="toggleLossDetails()">
+<div class="collapsed-left">
+<div class="collapsed-title">✅ 최대손실액 적용 (활성화 중) <span style="background:#22c55e;color:#000;padding:2px 6px;border-radius:10px;font-size:10px">ON</span></div>
+<div class="collapsed-values" id="lossCollapsedValues">$500 / 5% / 10회 | 초기 $10,000 | 오늘 $0.00</div>
+</div>
+<div class="collapsed-right">
+<span style="font-size:10px;color:#888">클릭하여 펼치기</span>
+<div class="expand-btn" id="lossExpandBtn">▼ 펼치기</div>
+</div>
+</div>
+<div id="lossConfig" style="margin-top:16px;padding-top:16px;border-top:1px solid #25262f;display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div style="font-size:12px;font-weight:bold;color:#facc15">📉 당일 최대 손실액을 설정 하고 도달 시 당일매매 정지 합니다.</div>
+<div class="expand-btn" onclick="toggleLossDetails()">▲ 접기</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<!-- 최대손실액 $ -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">최대손실액 $</div>
+<div class="toggle-sub">금액 기준</div>
+</div>
+<input type="checkbox" class="toggle sub loss" id="maxLossAmountToggle" checked onchange="toggleSubLoss('amount')">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeMaxLossAmount">$500</span></div>
+<div class="input-slider-row" id="rowMaxLossAmount">
+<input class="input input-1-3" id="maxLossAmount" type="number" value="500" min="100" max="5000" step="50" oninput="syncLossSlider('amount');saveLossSettings()">
+<input type="range" class="slider-2-3 slider-red" id="sliderMaxLossAmount" min="100" max="5000" step="50" value="500" oninput="syncLossInput('amount');saveLossSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">당일 손실이 이 금액 도달 시 정지 - 1/3 입력 + 2/3 슬라이더</div>
+</div>
+
+<!-- 최대손실률 % -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">최대손실률 %</div>
+<div class="toggle-sub">비율 기준</div>
+</div>
+<input type="checkbox" class="toggle sub loss" id="maxLossPercentToggle" checked onchange="toggleSubLoss('percent')">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeMaxLossPercent">5%</span></div>
+<div class="input-slider-row" id="rowMaxLossPercent">
+<input class="input input-1-3" id="maxLossPercent" type="number" value="5" min="1" max="20" step="0.5" oninput="syncLossSlider('percent');saveLossSettings()">
+<input type="range" class="slider-2-3 slider-red" id="sliderMaxLossPercent" min="1" max="20" step="0.5" value="5" oninput="syncLossInput('percent');saveLossSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">당일 손실률이 이 % 도달 시 정지</div>
+</div>
+
+<!-- 매매횟수 -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">매매횟수</div>
+<div class="toggle-sub">횟수 기준</div>
+</div>
+<input type="checkbox" class="toggle sub loss" id="maxTradeCountToggle" checked onchange="toggleSubLoss('count')">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#f59e0b;color:#000;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeMaxTradeCount">10회</span></div>
+<div class="input-slider-row" id="rowMaxTradeCount">
+<input class="input input-1-3" id="maxTradeCount" type="number" value="10" min="1" max="50" step="1" oninput="syncLossSlider('count');saveLossSettings()">
+<input type="range" class="slider-2-3" id="sliderMaxTradeCount" min="1" max="50" step="1" value="10" oninput="syncLossInput('count');saveLossSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">당일 매매횟수 도달 시 정지</div>
+</div>
+</div>
+
+<!-- 초기 자본 -->
+<div style="margin-top:12px;background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div style="font-size:11px;color:#888;display:flex;justify-content:space-between">초기 자본 (손실률 계산 기준) <span style="background:#3b82f6;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeInitialCapital">$10,000</span></div>
+<div class="input-slider-row" id="rowInitialCapital" style="margin-top:8px">
+<input class="input input-1-3" id="initialCapital" type="number" value="10000" min="1000" max="100000" step="1000" oninput="syncLossSlider('capital');saveLossSettings()">
+<input type="range" class="slider-2-3 slider-blue" id="sliderInitialCapital" min="1000" max="100000" step="1000" value="10000" oninput="syncLossInput('capital');saveLossSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:4px">예: 자본 $10,000, 손실률 5% → $500 손실 시 정지 - 1/3 입력 + 2/3 슬라이더</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+<div style="background:#1f1f25;border-radius:10px;padding:12px;text-align:center;border:1px solid #2a2a35">
+<div style="font-size:11px;color:#888">오늘 손실</div>
+<div style="font-size:16px;font-weight:bold;color:#ff6b6b" id="todayLoss">$0.00</div>
+<div style="font-size:11px;color:#888" id="todayLossPercent">0.00% / $0</div>
+</div>
+<div style="background:#1f1f25;border-radius:10px;padding:12px;text-align:center;border:1px solid #2a2a35">
+<div style="font-size:11px;color:#888">기준 대비</div>
+<div style="font-size:12px" id="lossVsLimit">0% / $500 (5%)</div>
+<div style="font-size:10px;color:#888;margin-top:2px" id="lossStatus">정상 - 매매 가능</div>
+</div>
+</div>
+<div class="remain-bar" style="margin-top:10px"><div id="lossProgress" class="remain-fill" style="width:0%;background:#22c55e"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:10px;color:#888;margin-top:4px">
+<span>0%</span><span>최대손실 도달 (당일 정지)</span>
+</div>
+</div>
+</div>
+
+<div class="list-row" style="flex-direction:column;align-items:stretch">
+<div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+<div>
+<div class="list-label" id="posCloseSub" style="font-size:14px">OFF: 진입가 대비 손실 시 청산 미적용 <b style='color:#facc15'>(나스닥 만 해당됨)</b></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<input type="checkbox" class="toggle loss" id="posCloseToggle" onchange="togglePosClose()">
+</div>
+</div>
+
+<div id="posCloseCollapsed" class="collapsed-summary" style="display:none;background:linear-gradient(90deg,#2a1f1f,#1f1f25);border-color:#4a2a2a" onclick="togglePosCloseDetails()">
+<div class="collapsed-left">
+<div class="collapsed-title" style="color:#ef4444">🔻 현포지션 청산 (활성화 중) <span style="background:#ef4444;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px">ON</span></div>
+<div class="collapsed-values" id="posCloseCollapsedValues">2% / $100 | 진입가 대비 청산</div>
+</div>
+<div class="collapsed-right">
+<span style="font-size:10px;color:#888">클릭하여 펼치기</span>
+<div class="expand-btn">▼ 펼치기</div>
+</div>
+</div>
+<div id="posCloseConfig" style="margin-top:12px;background:#262831;border-radius:12px;padding:14px;display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div style="font-size:12px;font-weight:bold">🔻 현포지션 청산 - 진입가 대비 손실 시 청산</div>
+<div class="expand-btn" onclick="togglePosCloseDetails()">▲ 접기</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<!-- 손실률 % -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">진입가 대비 손실률 %</div>
+<div class="toggle-sub">손실률 기준 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="togglePosPercent" checked onchange="togglePosCloseItem('percent', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgePosPercent">2%</span></div>
+<div class="input-slider-row" id="rowPosPercent">
+<input class="input input-1-3" id="posClosePercent" type="number" value="2" min="0.1" max="10" step="0.1" oninput="syncPosCloseSlider('percent');savePosCloseSettings()">
+<input type="range" class="slider-2-3 slider-red" id="sliderPosPercent" min="0.1" max="10" step="0.1" value="2" oninput="syncPosCloseInput('percent');savePosCloseSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">진입가 대비 이 % 이상 손실 시 청산 - 1/3 입력 + 2/3 슬라이더</div>
+</div>
+
+<!-- 손실액 $ -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">진입가 대비 손실액 $</div>
+<div class="toggle-sub">손실액 기준 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="togglePosAmount" checked onchange="togglePosCloseItem('amount', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgePosAmount">$100</span></div>
+<div class="input-slider-row" id="rowPosAmount">
+<input class="input input-1-3" id="posCloseAmount" type="number" value="100" min="10" max="1000" step="10" oninput="syncPosCloseSlider('amount');savePosCloseSettings()">
+<input type="range" class="slider-2-3 slider-red" id="sliderPosAmount" min="10" max="1000" step="10" value="100" oninput="syncPosCloseInput('amount');savePosCloseSettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">진입가 대비 이 금액 이상 손실 시 청산 - 슬라이더</div>
+</div>
+</div>
+
+<div style="margin-top:12px;background:#0f0f11;border-radius:10px;padding:12px">
+<div style="font-size:12px;font-weight:bold;margin-bottom:8px">📍 현재의 포지션 - 진입가 대비 손익 (%) 함께 표시 - 슬라이더 포함</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<!-- 현재 진입가 -->
+<div class="field-group" style="background:#1a1a1a;border-radius:8px;padding:8px;border:1px solid #2a2a2a">
+<div style="font-size:10px;color:#888;display:flex;justify-content:space-between">진입가 <span id="badgeCurEntry" style="font-size:10px;color:#22c55e">25000</span></div>
+<div class="input-slider-row" style="margin-top:6px">
+<input class="input input-1-3" id="currentEntryPrice" type="number" value="25000" min="20000" max="30000" step="100" oninput="syncPosCloseSlider('curEntry');updateCurrentPos()" style="padding:6px;font-size:12px">
+<input type="range" class="slider-2-3" id="sliderCurEntry" min="20000" max="30000" step="100" value="25000" oninput="syncPosCloseInput('curEntry');updateCurrentPos()">
+</div>
+</div>
+<!-- 현재가 -->
+<div class="field-group" style="background:#1a1a1a;border-radius:8px;padding:8px;border:1px solid #2a2a2a">
+<div style="font-size:10px;color:#888;display:flex;justify-content:space-between">현재가 <span id="badgeCurMarket" style="font-size:10px;color:#3b82f6">24800</span></div>
+<div class="input-slider-row" style="margin-top:6px">
+<input class="input input-1-3" id="currentMarketPrice" type="number" value="24800" min="20000" max="30000" step="100" oninput="syncPosCloseSlider('curMarket');updateCurrentPos()" style="padding:6px;font-size:12px">
+<input type="range" class="slider-2-3 slider-blue" id="sliderCurMarket" min="20000" max="30000" step="100" value="24800" oninput="syncPosCloseInput('curMarket');updateCurrentPos()">
+</div>
+</div>
+<!-- 계약수 -->
+<div class="field-group" style="background:#1a1a1a;border-radius:8px;padding:8px;border:1px solid #2a2a2a">
+<div style="font-size:10px;color:#888;display:flex;justify-content:space-between">계약수 <span id="badgeCurContract" style="font-size:10px;color:#22c55e">1</span></div>
+<div class="input-slider-row" style="margin-top:6px">
+<input class="input input-1-3" id="currentContracts" type="number" value="1" min="1" max="10" step="1" oninput="syncPosCloseSlider('curContract');updateCurrentPos()" style="padding:6px;font-size:12px">
+<input type="range" class="slider-2-3" id="sliderCurContract" min="1" max="10" step="1" value="1" oninput="syncPosCloseInput('curContract');updateCurrentPos()">
+</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+<div style="background:#1a1a1a;border-radius:8px;padding:10px;text-align:center">
+<div style="font-size:10px;color:#888">진입가 대비 손실률</div>
+<div style="font-size:18px;font-weight:bold" id="entryVsPercent">-0.80%</div>
+<div style="font-size:11px;color:#888" id="entryVsDetail">25000 → 24800</div>
+</div>
+<div style="background:#1a1a1a;border-radius:8px;padding:10px;text-align:center">
+<div style="font-size:10px;color:#888">진입가 대비 손실액</div>
+<div style="font-size:18px;font-weight:bold" id="entryVsAmount">-$400</div>
+<div style="font-size:11px" id="entryVsProfit">수익: -$430 (수수료 포함)</div>
+</div>
+</div>
+<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;background:#1a1a1a;border-radius:8px;padding:10px">
+<div>
+<div style="font-size:11px;color:#888">현재 포지션 손익</div>
+<div style="font-size:13px" id="currentPosInfo">진입가 대비 -0.80% / -$400</div>
+</div>
+<div style="text-align:right">
+<div id="posCloseStatus" style="font-size:11px;color:#22c55e;font-weight:bold">정상</div>
+<div style="font-size:10px;color:#888" id="posCloseAction">청산 기준: 2% / $100</div>
+</div>
+</div>
+<div class="remain-bar" style="margin-top:8px"><div id="posCloseProgress" class="remain-fill" style="width:0%;background:#22c55e"></div></div>
+</div>
+</div>
+</div>
+
+
+<div class="list-row" style="flex-direction:column;align-items:stretch">
+<div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+<div>
+<div class="list-label" id="nasdaqSub" style="font-size:14px">OFF: 나스닥 재매수 미적용 <b style='color:#facc15'>(나스닥 만 해당됨)</b></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<input type="checkbox" class="toggle" id="nasdaqToggle" onchange="toggleNasdaqRebuy()" style="background:#3a3d4a">
+</div>
+</div>
+
+<div id="nasdaqCollapsed" class="collapsed-summary" style="display:none;background:linear-gradient(90deg,#1a2332,#1f1f25);border-color:#2a3a5a" onclick="toggleNasdaqDetails()">
+<div class="collapsed-left">
+<div class="collapsed-title" style="color:#3b82f6">📈 나스닥 재매수 (활성화 중) <span style="background:#3b82f6;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px">ON</span></div>
+<div class="collapsed-values" id="nasdaqCollapsedValues">NASDAQ | 진입 25000 / 1계약 | 목표 0.5% / 손절 0.3% - 최종이용자폼 그대로 사용</div>
+</div>
+<div class="collapsed-right">
+<span style="font-size:10px;color:#888">클릭하여 펼치기</span>
+<div class="expand-btn">▼ 펼치기</div>
+</div>
+</div>
+<div id="nasdaqRebuyConfig" style="margin-top:16px;padding-top:16px;border-top:1px solid #25262f;display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div style="font-size:12px;font-weight:bold;color:#22c55e">📈 나스닥 재매수 설정 - 현제는 나스닥만 가능합니다. (최종이용자폼 그대로 사용)</div>
+<div class="expand-btn" onclick="toggleNasdaqDetails()">▲ 접기</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<!-- 진입가 기준 -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">재매수 진입가 기준</div>
+<div class="toggle-sub">기준가 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="toggleEntry" checked onchange="toggleNasdaqItem('entry', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#22c55e;color:#000;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeEntry">25000</span></div>
+<div class="input-slider-row" id="rowEntry">
+<input class="input input-1-3" id="nasdaqEntryBasis" type="number" value="25000" min="20000" max="30000" step="100" oninput="syncNasdaqSlider('entry');saveNasdaqRebuySettings()">
+<input type="range" class="slider-2-3" id="sliderEntry" min="20000" max="30000" step="100" value="25000" oninput="syncNasdaqInput('entry');saveNasdaqRebuySettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">나스닥 진입 기준가 - 1/3 입력 + 2/3 슬라이더</div>
+</div>
+
+<!-- 계약수 -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">재매수 계약수</div>
+<div class="toggle-sub">계약수 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="toggleContract" checked onchange="toggleNasdaqItem('contract', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#22c55e;color:#000;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeContract">1계약</span></div>
+<div class="input-slider-row" id="rowContract">
+<input class="input input-1-3" id="nasdaqContracts" type="number" value="1" min="1" max="10" step="1" oninput="syncNasdaqSlider('contract');saveNasdaqRebuySettings()">
+<input type="range" class="slider-2-3 slider-blue" id="sliderContract" min="1" max="10" step="1" value="1" oninput="syncNasdaqInput('contract');saveNasdaqRebuySettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">재매수 시 계약수 - 슬라이더</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+<!-- 목표가 % -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">재매수 목표가 %</div>
+<div class="toggle-sub">목표가 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="toggleTarget" checked onchange="toggleNasdaqItem('target', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#3b82f6;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeTarget">0.5%</span></div>
+<div class="input-slider-row" id="rowTarget">
+<input class="input input-1-3" id="nasdaqTargetPercent" type="number" value="0.5" min="0.1" max="5" step="0.1" oninput="syncNasdaqSlider('target');saveNasdaqRebuySettings()">
+<input type="range" class="slider-2-3 slider-blue" id="sliderTarget" min="0.1" max="5" step="0.1" value="0.5" oninput="syncNasdaqInput('target');saveNasdaqRebuySettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">진입가 대비 목표 수익률</div>
+</div>
+
+<!-- 손절가 % -->
+<div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+<div class="toggle-row" style="margin:0 0 10px 0;background:#262831">
+<div>
+<div class="toggle-label">재매수 손절가 %</div>
+<div class="toggle-sub">손절가 활성화</div>
+</div>
+<input type="checkbox" class="toggle sub" id="toggleStop" checked onchange="toggleNasdaqItem('stop', this.checked)">
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:4px;display:flex;justify-content:space-between">값 <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold" id="badgeStop">0.3%</span></div>
+<div class="input-slider-row" id="rowStop">
+<input class="input input-1-3" id="nasdaqStopPercent" type="number" value="0.3" min="0.1" max="5" step="0.1" oninput="syncNasdaqSlider('stop');saveNasdaqRebuySettings()">
+<input type="range" class="slider-2-3 slider-red" id="sliderStop" min="0.1" max="5" step="0.1" value="0.3" oninput="syncNasdaqInput('stop');saveNasdaqRebuySettings()">
+</div>
+<div style="font-size:10px;color:#666;margin-top:3px">진입가 대비 손절률</div>
+</div>
+</div>
+<div style="margin-top:12px;background:#1f1f25;border-radius:10px;padding:12px;border:1px solid #2a3a35">
+<div style="font-size:11px;color:#22c55e;font-weight:bold">💡 연동: 하단 ③ 매매 실행 - 재매수 설정 (현제는 나스닥만 가능합니다.) 버튼과 연동</div>
+<div style="font-size:10px;color:#888;margin-top:4px">이 설정은 최종이용자폼의 재매수항목 설정화면을 그대로 불러다가 사용합니다. 진입가/목표가/손절가는 하단 매매 실행 카드와 동일하게 적용됩니다.</div>
+<div style="display:flex;gap:8px;margin-top:8px">
+<div style="flex:1;background:#262831;border-radius:8px;padding:8px;text-align:center">
+<div style="font-size:10px;color:#888">나스닥 전용</div>
+<div style="font-size:12px;font-weight:bold;color:#22c55e" id="nasdaqMarket">NASDAQ</div>
+</div>
+<div style="flex:1;background:#262831;border-radius:8px;padding:8px;text-align:center">
+<div style="font-size:10px;color:#888">재매수 상태</div>
+<div style="font-size:12px;font-weight:bold" id="nasdaqRebuyStatus">대기중</div>
+</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+<button style="background:#22c55e;color:#000;border:none;border-radius:8px;padding:10px;font-weight:bold;cursor:pointer" onclick="saveNasdaqRebuySettings()">저장 + 적용</button>
+<button style="background:#262831;color:#fff;border:1px solid #3a3d4a;border-radius:8px;padding:10px;cursor:pointer" onclick="document.getElementById('entryPrice').scrollIntoView({behavior:'smooth'})">③ 매매 실행으로 이동</button>
+</div>
+</div>
+</div>
+
+
+<div class="list-row" style="flex-direction:column;align-items:stretch">
+<div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+<div>
+<div class="list-label">관리자 복제매매 가능한 남은일자</div>
+<div class="list-sub">구독 만료일까지 남은 기간</div>
+</div>
+<div>
+<span id="remainBadge" class="badge badge-green">30일 남음</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<div style="flex:1;background:#262831;border-radius:10px;padding:10px;text-align:center">
+<div style="font-size:20px;font-weight:bold;color:#22c55e" id="remainDays">30</div>
+<div style="font-size:11px;color:#888">남은 일자</div>
+</div>
+<div style="flex:1;background:#262831;border-radius:10px;padding:10px;text-align:center">
+<div style="font-size:16px;font-weight:bold;color:#facc15" id="expireDate">2026-11-24</div>
+<div style="font-size:11px;color:#888">만료일</div>
+</div>
+</div>
+<div class="remain-bar"><div id="remainFill" class="remain-fill" style="width:100%"></div></div>
+<div style="margin-top:10px;background:#1f1f25;border-radius:10px;padding:10px 12px;border:1px solid #3a2a00;display:flex;justify-content:space-between;align-items:center;gap:8px">
+<div style="display:flex;flex-direction:column">
+<div style="font-size:12px;color:#facc15;font-weight:600">관리자 매매 복제매매를 재신청 합니다.</div>
+<div style="font-size:10px;color:#888;margin-top:2px">클릭하여 재신청 - 텔레그램 신청 폼 연결</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+<div style="display:flex;flex-direction:column;align-items:flex-end;margin-right:4px">
+<div style="font-size:11px;color:#22c55e;font-weight:bold" id="reapplyInfo">잔여 30일</div>
+<div style="font-size:10px;color:#888" id="reapplyRemain">30일</div>
+</div>
+<div style="display:flex;align-items:center;gap:6px;background:#2a2410;border:1px solid #facc15;border-radius:30px;padding:4px 8px 4px 10px">
+<span style="font-size:11px;font-weight:bold;color:#facc15">재신청</span>
+<input type="checkbox" class="toggle reapply" id="reapplyToggle" onchange="handleReapplyToggle(this)">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="card">
+<div style="font-weight:bold">① 계좌 자동 인식 <span class="private">AUTO</span></div>
+<div style="margin-top:10px;font-size:13px;font-weight:600">감지된 계좌 (계좌번호) <span style="font-size:11px;color:#facc15;font-weight:normal">계좌번호가 오류시 수정 하십시오.</span></div>
+<div class="flex"><span>증권사 계좌번호</span><span id="detectedAcc">자동인식중...</span></div>
+<div style="margin-top:10px">
+<div style="font-size:11px;color:#888;margin-bottom:4px">증권사 계좌번호 입력 (오류시 수정)</div>
+<input class="input" id="brokerAccountInput" placeholder="증권사 계좌번호 (예: 7020-3101) - 오류시 여기에 수정 입력" oninput="updateBrokerAccount()">
+<input class="input" id="accountInput" placeholder="계좌번호 (예: 7020-3101)" style="margin-top:6px;display:none">
+</div>
+
+</div>
+
+<div class="card">
+<div style="font-weight:bold">② 수익관리 (계좌 연동) <span class="private">PRIVATE</span></div>
+<div class="profit-box">
+<div class="flex"><span>계좌</span><span id="profitAcc">7020-3101</span></div>
+<div class="flex"><span>당일 환율</span><span id="dailyExchangeRate" style="color:#facc15;font-weight:bold">1,350.50원 / $1</span></div>
+<div class="flex"><span>오늘 손익</span><span id="todayProfit" class="profit">$0.00</span></div>
+<div class="flex"><span>전체 손익</span><span id="realized" class="profit">$0.00</span></div>
+<div class="flex"><span>수수료 합계</span><span id="totalFee">$0.00</span></div>
+<div class="flex"><span>최대손실 설정</span><span id="maxLossDisplay">$500 / 5%</span></div>
+<div class="flex" style="border-top:2px solid #3a3d4a;margin-top:4px;padding-top:10px"><span style="font-weight:bold;color:#facc15">총액 (누적금)</span><span id="totalAmount" style="font-weight:bold;color:#22c55e;font-size:15px">$10,000.00</span></div>
+<div class="flex"><span style="font-size:11px;color:#888">총액 (원화)</span><span id="totalAmountKRW" style="font-size:12px;color:#22c55e">₩13,505,000원</span></div>
+</div>
+
+<div id="systemMonitor" style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:12px;font-weight:bold">📡 시스템 감시 로그</div>
+<div style="display:flex;gap:4px">
+<span class="badge badge-green" id="netStatusBadge" style="font-size:9px"><span class="status-dot dot-green"></span>인터넷 정상</span>
+<span class="badge badge-gray" id="sysStatusBadge" style="font-size:9px">정상</span>
+</div>
+</div>
+<div class="status-grid">
+<div class="status-box"><div style="font-size:9px;color:#888">인터넷</div><div style="font-size:11px;font-weight:bold;margin-top:3px" id="internetBoxStatus"><span class="status-dot dot-green"></span>연결됨</div><div style="font-size:8px;color:#666;margin-top:1px" id="internetTimeStatus">지속</div></div>
+<div class="status-box"><div style="font-size:9px;color:#888">텔레그램</div><div style="font-size:11px;font-weight:bold;margin-top:3px" id="tgBoxStatus"><span class="status-dot dot-green"></span>연동</div><div style="font-size:8px;color:#666;margin-top:1px">ON</div></div>
+<div class="status-box"><div style="font-size:9px;color:#888">시스템</div><div style="font-size:11px;font-weight:bold;margin-top:3px" id="systemBoxStatus"><span class="status-dot dot-green"></span>정상</div><div style="font-size:8px;color:#666;margin-top:1px" id="uptimeStatus">가동중</div></div>
+<div class="status-box"><div style="font-size:9px;color:#888">당일 오류</div><div style="font-size:13px;font-weight:bold;margin-top:3px;color:#ef4444" id="errorCountStatus">0건</div><div style="font-size:8px;color:#666;margin-top:1px">검색가능</div></div>
+</div>
+<div class="search-row">
+<input class="input" id="logSearchInput" placeholder="🔍 검색 - 인터넷, 오류, 재부팅" oninput="filterSystemLogs()" style="font-size:11px;padding:6px 8px">
+<button class="filter-btn" onclick="clearSystemLogs()" style="white-space:nowrap;font-size:10px">🗑️</button>
+<button class="filter-btn" onclick="exportSystemLogs()" style="white-space:nowrap;font-size:10px">📤</button>
+</div>
+<div class="filter-bar">
+<button class="filter-btn active" data-filter="ALL" onclick="setLogFilter('ALL')">전체</button>
+<button class="filter-btn" data-filter="ERROR" onclick="setLogFilter('ERROR')">🔴 오류</button>
+<button class="filter-btn" data-filter="NETWORK" onclick="setLogFilter('NETWORK')">📡 네트워크</button>
+<button class="filter-btn" data-filter="SYSTEM" onclick="setLogFilter('SYSTEM')">💻 시스템</button>
+<button class="filter-btn" data-filter="TELEGRAM" onclick="setLogFilter('TELEGRAM')">✈️ 텔레그램</button>
+</div>
+<div id="tgLog" class="log-container"></div>
+<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:#666">
+<span>💡 단절/재접속/재부팅/오류 자동 기록</span>
+<span id="logCountStatus">0개 로그</span>
+</div>
+</div>
+
+</div>
+
+<div class="card">
+<div style="font-weight:bold">③ 매매 실행 <span id="execBadge" class="badge badge-blue">내 PC 신호</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+<input class="input" id="entryPrice" type="number" placeholder="진입가">
+<input class="input" id="targetPrice" type="number" placeholder="목표가">
+<input class="input" id="stopPrice" type="number" placeholder="손절가">
+<input class="input" id="contracts" type="number" value="1" min="1">
+</div>
+<div class="profit-box">
+<div class="flex"><span>예상 수익</span><span class="profit" id="expProfit">$0.00</span></div>
+<div class="flex"><span>예상 손절</span><span id="expLoss" style="color:#ff6b6b">$0.00</span></div>
+<div class="flex"><span>현재 모드</span><span id="currentMode">내 PC 신호로 매매</span></div>
+</div>
+<button id="rebuyBtn" style="background:#22c55e;color:#000;border:none;border-radius:12px;padding:16px;width:100%;font-weight:900;font-size:15px;margin-top:12px;cursor:pointer;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(34,197,94,0.3)" onclick="executeRebuy()">재매수 설정(나홀로 매매 하는 종목) - 현재 지원 예정으로 작업중 입니다</button><div style="font-size:13px;color:#22c55e;margin-top:8px;text-align:center;font-weight:bold">④ 재매수 설정(나홀로 매매 하는 종목)에서 종목별 세부 설정 가능 - 지원 예정 작업중</div>
+<div id="copyStatus" style="display:none;background:#262831;padding:10px;border-radius:10px;margin-top:10px;font-size:12px">
+<div>관리자 신호: <span id="adminSignal">대기중...</span></div>
+<div>복제 매매: <span id="copyTrade">대기</span></div>
+</div>
+</div>
+
+<div class="card" style="border:1px solid #22c55e">
+<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleSoloCard()">
+<div style="font-weight:900;font-size:20px">④ 재매수 설정 (나홀로 매매 하는 종목) <span style="background:#22c55e;color:#000;padding:5px 12px;border-radius:10px;font-size:14px;font-weight:900">SOLO</span> <span style="background:#f59e0b;color:#000;padding:6px 14px;border-radius:10px;font-size:15px;font-weight:900;margin-left:8px;box-shadow:0 0 8px rgba(245,158,11,0.5)">현재 지원 예정으로 작업중 입니다</span></div>
+<div class="expand-btn" id="soloExpandBtn" style="font-size:14px;padding:10px 18px;font-weight:bold">▼ 펼치기 - 종목 LIST 보기</div>
+</div>
+<div id="soloMainDesc" style="font-size:17px;color:#f59e0b;margin-top:10px;font-weight:900;letter-spacing:0.3px">OFF: 나홀로 매매 종목 미적용 - 클릭하여 종목 LIST 보기 (현재 지원 예정으로 작업중)</div>
+<div id="soloUserInfo" style="font-size:13px;color:#facc15;margin-top:8px;line-height:1.6;background:#1a1f0f;border:1px solid #facc15;border-radius:8px;padding:10px">
+<span id="soloUserNameDisplay" style="font-weight:900;color:#fff">"USER_1"</span> 님이 개별적으로 매매하는 종목 입니다.<br>
+<span style="color:#e6e8ec">이 항목의 종목은 관리자는 알 수가 없으며, 관리자가 관리 하지 못합니다.</span>
+</div>
+
+<div id="soloCardBody" style="display:none">
+<div id="soloSymbolList" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px">
+<!-- Symbol buttons will be injected by JS -->
+</div>
+
+<div id="soloRebuyDetail" style="display:none;margin-top:16px">
+<!-- Detail will be injected by JS -->
+</div>
+
+
+</div>
+</div>
+
+
+<script>
+// ===== 기본 변수 =====
+let myData=null, isTrading=true, isCopyMode=false, isTgActive=true, isLossActive=true, isPosCloseActive=false, isNasdaqRebuyActive=false, remainDays=30;
+window.currentExchangeRate=1350.50;
+const POINT_VALUE=2, FEE=30, NPOINT_URL="https://api.npoint.io/04ac6b88e333695ed90b";
+
+// === 자동 업데이트 - 2 URL 고정 방식 - 추가 URL 1개와 현재 URL 함께 사용 ===
+const USER_PC_VERSION = 55; // 현재 버전 - Admin이 배포할 때마다 56,57로 증가
+const USER_PC_FORM_URL = "https://mnq-user-pc.pages.dev/user_pc.html"; // 고정 새 URL - 1번만 만들고 평생 고정 (예시, 실제 생성 후 교체)
+const NPOINT_VERSION_URL = "https://api.npoint.io/04ac6b88e333695ed90b"; // 현재 URL - 그대로 사용, version 신호용
+
+async function checkUserPCUpdate(){
+  try{
+    const res = await fetch(NPOINT_VERSION_URL + "?t=" + Date.now());
+    const data = await res.json();
+    const latestVer = data.version || 55;
+    const curVer = localStorage.getItem('USER_PC_VER') ? parseInt(localStorage.getItem('USER_PC_VER')) : USER_PC_VERSION;
+    if(latestVer > curVer){
+      const msg = `새 User PC 폼 v${latestVer} 배포됨\n현재 v${curVer} → v${latestVer}\n자동 적용할까요?`;
+      if(confirm(msg)){
+        localStorage.setItem('USER_PC_VER', latestVer);
+        // 고정 새 URL로 이동 - 주소는 평생 동일, 내용만 바뀜
+        if(data.form_url) location.href = data.form_url;
+        else location.reload(true);
+      } else {
+        addLog(`업데이트 보류: v${curVer} → v${latestVer} - 나중에 적용 가능`, "WARN");
+      }
+    }
+  }catch(e){
+    console.log("버전 체크 실패", e);
+  }
+}
+// 5분마다 체크 - Admin PC의 5분 체크와 동일 주기
+setInterval(checkUserPCUpdate, 300000);
+// 시작 10초 후 1번 체크
+setTimeout(checkUserPCUpdate, 10000);
+
+function addLog(msg, type){
+  try{
+    const container = document.getElementById('logContainer');
+    if(!container) return;
+    const div = document.createElement('div');
+    div.className = 'log-entry ' + (type||'').toLowerCase();
+    div.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span><span class="log-type ${type}">${type}</span><span class="log-msg">${msg}</span>`;
+    container.prepend(div);
+  }catch(e){}
+}
+
+
+// ===== 접기/펼치기 상태 =====
+let isLossDetailsCollapsed=true;
+let isPosCloseDetailsCollapsed=true;
+let isNasdaqDetailsCollapsed=true;
+
+function updateLossCollapsedValues(){
+  try{
+    const amt=document.getElementById('maxLossAmount').value||500;
+    const pct=document.getElementById('maxLossPercent').value||5;
+    const cnt=document.getElementById('maxTradeCount').value||10;
+    const cap=document.getElementById('initialCapital').value||10000;
+    const today=document.getElementById('todayLoss')?document.getElementById('todayLoss').textContent:"$0.00";
+    const status=document.getElementById('lossStatus')?document.getElementById('lossStatus').textContent:"정상";
+    const el=document.getElementById('lossCollapsedValues');
+    if(el) el.textContent=`$${amt} / ${pct}% / ${cnt}회 | 초기 $${cap} | 오늘 ${today} (${status})`;
+  }catch(e){}
+}
+function toggleLossDetails(){
+  const collapsed=document.getElementById('lossCollapsed');
+  const expanded=document.getElementById('lossConfig');
+  if(!collapsed||!expanded) return;
+  if(isLossDetailsCollapsed){
+    collapsed.style.display='none';
+    expanded.style.display='block';
+    isLossDetailsCollapsed=false;
+  }else{
+    expanded.style.display='none';
+    collapsed.style.display='flex';
+    isLossDetailsCollapsed=true;
+    updateLossCollapsedValues();
+  }
+}
+function updatePosCloseCollapsedValues(){
+  try{
+    const pct=document.getElementById('posClosePercent').value||2;
+    const amt=document.getElementById('posCloseAmount').value||100;
+    const el=document.getElementById('posCloseCollapsedValues');
+    if(el) el.textContent=`${pct}% / $${amt} | 진입가 대비 청산`;
+  }catch(e){}
+}
+
+function togglePosCloseItem(type, on){
+  const map={percent:'PosPercent', amount:'PosAmount'};
+  const rowId='row'+(map[type]||'');
+  const row=document.getElementById(rowId);
+  if(row){ if(on) row.classList.remove('disabled'); else row.classList.add('disabled'); }
+  if(!myData) myData={};
+  if(type==='percent') myData.posClosePercentActive=on;
+  if(type==='amount') myData.posCloseAmountActive=on;
+  saveMyData();
+  updatePosCloseCollapsedValues();
+}
+function syncPosCloseSlider(type){
+  if(type==='percent'){
+    const v=document.getElementById('posClosePercent').value;
+    document.getElementById('sliderPosPercent').value=v;
+    const b=document.getElementById('badgePosPercent'); if(b) b.textContent=v+'%';
+  } else if(type==='amount'){
+    const v=document.getElementById('posCloseAmount').value;
+    document.getElementById('sliderPosAmount').value=v;
+    const b=document.getElementById('badgePosAmount'); if(b) b.textContent='$'+v;
+  } else if(type==='curEntry'){
+    const v=document.getElementById('currentEntryPrice').value;
+    document.getElementById('sliderCurEntry').value=v;
+    const b=document.getElementById('badgeCurEntry'); if(b) b.textContent=v;
+  } else if(type==='curMarket'){
+    const v=document.getElementById('currentMarketPrice').value;
+    document.getElementById('sliderCurMarket').value=v;
+    const b=document.getElementById('badgeCurMarket'); if(b) b.textContent=v;
+  } else if(type==='curContract'){
+    const v=document.getElementById('currentContracts').value;
+    document.getElementById('sliderCurContract').value=v;
+    const b=document.getElementById('badgeCurContract'); if(b) b.textContent=v;
+  }
+  if(type==='percent'||type==='amount') updatePosCloseCollapsedValues();
+}
+function syncPosCloseInput(type){
+  if(type==='percent'){
+    const v=document.getElementById('sliderPosPercent').value;
+    document.getElementById('posClosePercent').value=v;
+    const b=document.getElementById('badgePosPercent'); if(b) b.textContent=v+'%';
+  } else if(type==='amount'){
+    const v=document.getElementById('sliderPosAmount').value;
+    document.getElementById('posCloseAmount').value=v;
+    const b=document.getElementById('badgePosAmount'); if(b) b.textContent='$'+v;
+  } else if(type==='curEntry'){
+    const v=document.getElementById('sliderCurEntry').value;
+    document.getElementById('currentEntryPrice').value=v;
+    const b=document.getElementById('badgeCurEntry'); if(b) b.textContent=v;
+  } else if(type==='curMarket'){
+    const v=document.getElementById('sliderCurMarket').value;
+    document.getElementById('currentMarketPrice').value=v;
+    const b=document.getElementById('badgeCurMarket'); if(b) b.textContent=v;
+  } else if(type==='curContract'){
+    const v=document.getElementById('sliderCurContract').value;
+    document.getElementById('currentContracts').value=v;
+    const b=document.getElementById('badgeCurContract'); if(b) b.textContent=v;
+  }
+  if(type==='percent'||type==='amount') updatePosCloseCollapsedValues();
+}
+
+function togglePosCloseDetails(){
+  const collapsed=document.getElementById('posCloseCollapsed');
+  const expanded=document.getElementById('posCloseConfig');
+  if(!collapsed||!expanded) return;
+  if(isPosCloseDetailsCollapsed){
+    collapsed.style.display='none';
+    expanded.style.display='block';
+    isPosCloseDetailsCollapsed=false;
+  }else{
+    expanded.style.display='none';
+    collapsed.style.display='flex';
+    isPosCloseDetailsCollapsed=true;
+    updatePosCloseCollapsedValues();
+  }
+}
+function updateNasdaqCollapsedValues(){
+  try{
+    const entry=document.getElementById('nasdaqEntryBasis').value||25000;
+    const cont=document.getElementById('nasdaqContracts').value||1;
+    const tgt=document.getElementById('nasdaqTargetPercent').value||0.5;
+    const stp=document.getElementById('nasdaqStopPercent').value||0.3;
+    const eOn=document.getElementById('toggleEntry')?document.getElementById('toggleEntry').checked:true;
+    const cOn=document.getElementById('toggleContract')?document.getElementById('toggleContract').checked:true;
+    const tOn=document.getElementById('toggleTarget')?document.getElementById('toggleTarget').checked:true;
+    const sOn=document.getElementById('toggleStop')?document.getElementById('toggleStop').checked:true;
+    const parts=[];
+    if(eOn) parts.push(`진입 ${entry}`);
+    if(cOn) parts.push(`${cont}계약`);
+    if(tOn) parts.push(`목표 ${tgt}%`);
+    if(sOn) parts.push(`손절 ${stp}%`);
+    const el=document.getElementById('nasdaqCollapsedValues');
+    if(el) el.textContent=parts.length?`NASDAQ | ${parts.join(' / ')}`:'NASDAQ | 모두 OFF';
+    // badge & slider sync
+    const be=document.getElementById('badgeEntry'); if(be) be.textContent=entry;
+    const bc=document.getElementById('badgeContract'); if(bc) bc.textContent=cont+'계약';
+    const bt=document.getElementById('badgeTarget'); if(bt) bt.textContent=tgt+'%';
+    const bs=document.getElementById('badgeStop'); if(bs) bs.textContent=stp+'%';
+    const se=document.getElementById('sliderEntry'); if(se) se.value=entry;
+    const sc=document.getElementById('sliderContract'); if(sc) sc.value=cont;
+    const st=document.getElementById('sliderTarget'); if(st) st.value=tgt;
+    const ss=document.getElementById('sliderStop'); if(ss) ss.value=stp;
+  }catch(e){}
+}
+
+function toggleNasdaqItem(type, on){
+  const row=document.getElementById('row'+type.charAt(0).toUpperCase()+type.slice(1));
+  if(row){
+    if(on){ row.classList.remove('disabled'); } else { row.classList.add('disabled'); }
+  }
+  if(!myData) myData={};
+  myData['nasdaq'+type.charAt(0).toUpperCase()+type.slice(1)+'Active']=on;
+  saveMyData();
+  updateNasdaqCollapsedValues();
+}
+function syncNasdaqSlider(type){
+  if(type==='entry'){
+    const v=document.getElementById('nasdaqEntryBasis').value;
+    document.getElementById('sliderEntry').value=v;
+    const b=document.getElementById('badgeEntry'); if(b) b.textContent=v;
+  } else if(type==='contract'){
+    const v=document.getElementById('nasdaqContracts').value;
+    document.getElementById('sliderContract').value=v;
+    const b=document.getElementById('badgeContract'); if(b) b.textContent=v+'계약';
+  } else if(type==='target'){
+    const v=document.getElementById('nasdaqTargetPercent').value;
+    document.getElementById('sliderTarget').value=v;
+    const b=document.getElementById('badgeTarget'); if(b) b.textContent=v+'%';
+  } else if(type==='stop'){
+    const v=document.getElementById('nasdaqStopPercent').value;
+    document.getElementById('sliderStop').value=v;
+    const b=document.getElementById('badgeStop'); if(b) b.textContent=v+'%';
+  }
+  updateNasdaqCollapsedValues();
+}
+function syncNasdaqInput(type){
+  if(type==='entry'){
+    const v=document.getElementById('sliderEntry').value;
+    document.getElementById('nasdaqEntryBasis').value=v;
+    const b=document.getElementById('badgeEntry'); if(b) b.textContent=v;
+  } else if(type==='contract'){
+    const v=document.getElementById('sliderContract').value;
+    document.getElementById('nasdaqContracts').value=v;
+    const b=document.getElementById('badgeContract'); if(b) b.textContent=v+'계약';
+  } else if(type==='target'){
+    const v=document.getElementById('sliderTarget').value;
+    document.getElementById('nasdaqTargetPercent').value=v;
+    const b=document.getElementById('badgeTarget'); if(b) b.textContent=v+'%';
+  } else if(type==='stop'){
+    const v=document.getElementById('sliderStop').value;
+    document.getElementById('nasdaqStopPercent').value=v;
+    const b=document.getElementById('badgeStop'); if(b) b.textContent=v+'%';
+  }
+  updateNasdaqCollapsedValues();
+}
+
+function toggleNasdaqDetails(){
+  const collapsed=document.getElementById('nasdaqCollapsed');
+  const expanded=document.getElementById('nasdaqRebuyConfig');
+  if(!collapsed||!expanded) return;
+  if(isNasdaqDetailsCollapsed){
+    collapsed.style.display='none';
+    expanded.style.display='block';
+    isNasdaqDetailsCollapsed=false;
+  }else{
+    expanded.style.display='none';
+    collapsed.style.display='flex';
+    isNasdaqDetailsCollapsed=true;
+    updateNasdaqCollapsedValues();
+  }
+}
+
+// ===== 시스템 로그 =====
+let systemLogs=[], currentLogFilter='ALL', logSearchKeyword='', internetConnected=true, disconnectStartTime=null, systemStartTime=Date.now(), errorCount=0;
+function getTodayKey(){ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function getTimeStr(){ const now=new Date(); const isPM=now.getHours()>=12; const h=isPM? (now.getHours()===12?12:now.getHours()-12):(now.getHours()===0?12:now.getHours()); const ap=isPM?'오후':'오전'; return `${ap} ${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`; }
+function addSystemLog(type, level, msg){
+  const log={time:getTimeStr(), type, level, msg, timestamp:Date.now()};
+  systemLogs.push(log);
+  if(level==='error'||level==='warn') errorCount++;
+  try{ const todayKey='MNQ_LOGS_'+getTodayKey(); let arr=JSON.parse(localStorage.getItem(todayKey)||'[]'); arr.push(log); if(arr.length>200) arr=arr.slice(-200); localStorage.setItem(todayKey, JSON.stringify(arr)); }catch(e){}
+  renderSystemLogs(); updateSystemStatus();
+}
+function renderSystemLogs(){
+  const container=document.getElementById('tgLog'); if(!container) return;
+  const filtered=systemLogs.filter(l=>{ if(currentLogFilter!=='ALL'){ if(currentLogFilter==='ERROR' && l.level!=='error' && l.level!=='warn') return false; if(currentLogFilter!=='ERROR' && l.type!==currentLogFilter) return false; } if(logSearchKeyword && !l.msg.toLowerCase().includes(logSearchKeyword.toLowerCase())) return false; return true; });
+  container.innerHTML='';
+  filtered.slice(-100).forEach(l=>{ const div=document.createElement('div'); div.className=`log-entry ${l.level}`; div.innerHTML=`<span class="log-time">[${l.time}]</span><span class="log-type ${l.type}">${l.type}</span><span class="log-msg">${l.msg}</span>`; container.appendChild(div); });
+  container.scrollTop=container.scrollHeight;
+  const cnt=document.getElementById('logCountStatus'); if(cnt) cnt.textContent=`${filtered.length}개 로그`;
+  const err=document.getElementById('errorCountStatus'); if(err) err.textContent=`${errorCount}건`;
+}
+function setLogFilter(f){ currentLogFilter=f; document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>{ b.classList.remove('active'); if(b.dataset.filter===f) b.classList.add('active'); }); renderSystemLogs(); }
+function filterSystemLogs(){ const inp=document.getElementById('logSearchInput'); logSearchKeyword=inp?inp.value:''; renderSystemLogs(); }
+function clearSystemLogs(){ if(confirm('당일 로그 삭제?')){ systemLogs=[]; errorCount=0; localStorage.removeItem('MNQ_LOGS_'+getTodayKey()); renderSystemLogs(); addSystemLog('SYSTEM','system','🗑️ 로그 초기화'); } }
+function exportSystemLogs(){ const txt=systemLogs.map(l=>`[${l.time}] [${l.type}] ${l.msg}`).join('\n'); const blob=new Blob([txt],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`MNQ_시스템로그_${new Date().toISOString().slice(0,10)}.txt`; a.click(); }
+function updateSystemStatus(){ const up=document.getElementById('uptimeStatus'); if(up){ const d=Math.floor((Date.now()-systemStartTime)/1000); const h=Math.floor(d/3600); const m=Math.floor((d%3600)/60); up.textContent=`${h}시간 ${m}분 가동`; } }
+function tgLog(msg){
+  const lower=msg.toLowerCase(); let type='TELEGRAM', level='telegram';
+  if(lower.includes('인터넷')||lower.includes('단절')||lower.includes('재접속')){ type='NETWORK'; level=lower.includes('단절')?'error':'network'; }
+  else if(lower.includes('재부팅')||lower.includes('시스템')||lower.includes('복구')){ type='SYSTEM'; level=lower.includes('오류')?'error':'system'; }
+  else if(lower.includes('오류')||lower.includes('실패')){ type='ERROR'; level='error'; }
+  addSystemLog(type, level, msg);
+}
+function log(msg){ try{ console.log(msg); }catch(e){} }
+
+// ===== 기존 함수들 (간소화) =====
+function calcProfit(e,x,c,long){ if(!e||!x||!c) return 0; const pts=long?(x-e):(e-x); return Math.round((pts*POINT_VALUE*c-FEE)*100)/100; }
+function getTodayProfit(){ if(!myData) return 0; const tk=getTodayKey(); let t=0; (myData.history||[]).forEach(h=>{ const hd=new Date(h.time); const hk=hd.getFullYear()+"-"+(hd.getMonth()+1)+"-"+hd.getDate(); if(hk===tk) t+=h.profit||0; }); return t; }
+function saveMyData(){ if(!myData) return; localStorage.setItem("MNQ_MY_DATA_"+myData.id, JSON.stringify(myData)); try{ let central=JSON.parse(localStorage.getItem("MNQ_CENTRAL_FOR_ADMIN")||"{}"); central[myData.id]={...myData, lastUpdate: Date.now()}; localStorage.setItem("MNQ_CENTRAL_FOR_ADMIN", JSON.stringify(central)); }catch(e){} }
+function updateLossUI(){
+  if(!myData) return;
+  const tp=getTodayProfit(); const tl=tp<0?Math.abs(tp):0; const cap=myData.initialCapital||10000; const lp=cap>0?tl/cap*100:0;
+  const maxA=myData.maxLossAmount||500; const maxP=myData.maxLossPercent||5; const maxByP=cap*maxP/100; const eff=Math.min(maxA,maxByP);
+  const tlEl=document.getElementById('todayLoss'); if(tlEl){ tlEl.textContent=tp>=0?"+$"+tp.toFixed(2):"-$"+tl.toFixed(2); tlEl.style.color=tp>=0?"#22c55e":"#ff6b6b"; }
+  const tlp=document.getElementById('todayLossPercent'); if(tlp) tlp.textContent=lp.toFixed(2)+"% 손실 / $"+tl.toFixed(2);
+  const tp2=document.getElementById('todayProfit'); if(tp2){ tp2.textContent="$"+tp.toFixed(2); tp2.style.color=tp>=0?"#22c55e":"#ff6b6b"; }
+  const vs=document.getElementById('lossVsLimit'); if(vs) vs.textContent=tl.toFixed(0)+" / $"+maxA+" ("+maxP+"%)";
+  let prog=eff>0?Math.min(100, tl/eff*100):0; const progEl=document.getElementById('lossProgress'); if(progEl){ progEl.style.width=prog+"%"; progEl.style.background=prog>=100?"#ef4444":prog>=70?"#f59e0b":"#22c55e"; }
+  const statusEl=document.getElementById('lossStatus'); if(statusEl){ if(prog>=100){ statusEl.textContent="최대손실 도달 - 당일 매매 정지"; statusEl.style.color="#ef4444"; }else if(prog>=70){ statusEl.textContent="주의 - 손실 "+prog.toFixed(0)+"%"; statusEl.style.color="#f59e0b"; }else{ statusEl.textContent="정상 - 매매 가능"; statusEl.style.color="#22c55e"; } }
+  updateLossCollapsedValues();
+}
+function updateUI(){ if(!myData) return; try{ document.getElementById('uName').textContent=myData.name||"User"; document.getElementById('uAccount').textContent="/ "+myData.account; document.getElementById('detectedAcc').textContent=myData.account; document.getElementById('detectedTg').textContent=myData.telegram; document.getElementById('profitAcc').textContent=myData.account; document.getElementById('realized').textContent="$"+(myData.profit||0).toFixed(2); document.getElementById('totalFee').textContent="$"+(myData.feeTotal||0).toFixed(2); const cap=myData.initialCapital||10000; const tot=cap+(myData.profit||0); const el=document.getElementById('totalAmount'); if(el) el.textContent="$"+tot.toLocaleString(); updateLossUI(); }catch(e){} }
+function updateTopStatus(){ const b=document.getElementById('topStatusBadge'); if(!b) return; if(myData && myData.adminApproved && myData.isCopyMode){ b.textContent='관리자 복제매매'; b.className='badge badge-yellow'; }else{ b.textContent='내 PC 신호매매'; b.className='badge badge-blue'; } }
+function toggleTrade(){ isTrading=document.getElementById('tradeToggle').checked; myData.isTrading=isTrading; document.getElementById('tradeBadge').textContent=isTrading?"매매중":"매매정지"; document.getElementById('tradeBadge').className=isTrading?"badge badge-green":"badge badge-red"; document.getElementById('tradeSub').textContent=isTrading?"현재: 매매중":"현재: 매매정지"; saveMyData(); }
+function toggleCopyMode(){ isCopyMode=document.getElementById('copyToggle').checked; if(!myData) myData={}; myData.isCopyMode=isCopyMode; document.getElementById('copyBadge').textContent=isCopyMode?"관리자복제":"내 PC 신호"; document.getElementById('copyBadge').className=isCopyMode?"badge badge-yellow":"badge badge-blue"; saveMyData(); updateTopStatus(); }
+function toggleTelegram(){ isTgActive=document.getElementById('tgToggle').checked; myData.isTgActive=isTgActive; document.getElementById('tgBadge').textContent=isTgActive?"ON":"OFF"; document.getElementById('tgBadge').className=isTgActive?"badge badge-blue":"badge badge-red"; document.getElementById('tgSub').textContent=isTgActive?"ON: 텔레그램 신호 전송":"OFF :  핸드폰의 텔레그램 과 연동이 중지 됩니다."; tgLog(isTgActive?"텔레그램 ON - 신호 전송":"OFF :  핸드폰의 텔레그램 과 연동이 중지 됩니다."); saveMyData(); }
+function toggleLoss(){
+  const isChecked=document.getElementById('lossToggle').checked;
+  if(!myData) myData={}; myData.isLossActive=isChecked; isLossActive=isChecked;
+  const lb=document.getElementById('lossBadge'); if(lb){ lb.textContent=isChecked?"ON":"OFF"; lb.className=isChecked?"badge badge-red":"badge badge-blue"; }
+  document.getElementById('lossSub').textContent=isChecked?"ON: 하루 최대 손실 도달 시 당일 매매 정지 (활성화 중)":"OFF: 최대손실 미적용";
+  const collapsed=document.getElementById('lossCollapsed');
+  const expanded=document.getElementById('lossConfig');
+  if(isChecked){ if(collapsed) collapsed.style.display='flex'; if(expanded) expanded.style.display='none'; isLossDetailsCollapsed=true; updateLossCollapsedValues(); }
+  else{ if(collapsed) collapsed.style.display='none'; if(expanded) expanded.style.display='none'; }
+  saveMyData(); tgLog(isChecked?"최대손실 적용 ON (활성화 중) - 클릭하여 펼치기":"최대손실 적용 OFF"); updateLossUI();
+}
+function togglePosClose(){
+  const isChecked=document.getElementById('posCloseToggle').checked;
+  if(!myData) myData={}; myData.isPosCloseActive=isChecked; isPosCloseActive=isChecked;
+  const pcb=document.getElementById('posCloseBadge'); if(pcb){ pcb.textContent=isChecked?"ON":"OFF"; pcb.className=isChecked?"badge badge-red":"badge badge-blue"; }
+  document.getElementById('posCloseSub').innerHTML=isChecked?"ON: 진입가 대비 손실 시 청산 적용 (활성화 중) <b style='color:#facc15'>(나스닥 만 해당됨)</b>":"OFF: 진입가 대비 손실 시 청산 미적용 <b style='color:#facc15'>(나스닥 만 해당됨)</b>";
+  const collapsed=document.getElementById('posCloseCollapsed');
+  const expanded=document.getElementById('posCloseConfig');
+  if(isChecked){ if(collapsed) collapsed.style.display='flex'; if(expanded) expanded.style.display='none'; isPosCloseDetailsCollapsed=true; updatePosCloseCollapsedValues(); }
+  else{ if(collapsed) collapsed.style.display='none'; if(expanded) expanded.style.display='none'; }
+  saveMyData(); tgLog(isChecked?"현포지션 청산 ON (활성화 중) - 클릭하여 펼치기":"현포지션 청산 OFF");
+}
+function toggleNasdaqRebuy(){
+  const isChecked=document.getElementById('nasdaqToggle').checked;
+  if(!myData) myData={}; myData.isNasdaqRebuyActive=isChecked; isNasdaqRebuyActive=isChecked;
+  const nb=document.getElementById('nasdaqBadge'); if(nb){ nb.textContent=isChecked?"ON":"OFF"; nb.className=isChecked?"badge badge-green":"badge badge-blue"; }
+  document.getElementById('nasdaqSub').innerHTML=isChecked?"ON: 나스닥 재매수 활성화 (활성화 중) <b style='color:#facc15'>(나스닥 만 해당됨)</b>":"OFF: 나스닥 재매수 미적용 <b style='color:#facc15'>(나스닥 만 해당됨)</b>";
+  const collapsed=document.getElementById('nasdaqCollapsed');
+  const expanded=document.getElementById('nasdaqRebuyConfig');
+  if(isChecked){ if(collapsed) collapsed.style.display='flex'; if(expanded) expanded.style.display='none'; isNasdaqDetailsCollapsed=true; updateNasdaqCollapsedValues(); }
+  else{ if(collapsed) collapsed.style.display='none'; if(expanded) expanded.style.display='none'; }
+  saveMyData(); tgLog(isChecked?"나스닥 재매수 ON (활성화 중) - 클릭하여 펼치기":"나스닥 재매수 OFF");
+}
+
+function syncLossSlider(type){
+  if(type==='amount'){
+    const v=document.getElementById('maxLossAmount').value;
+    document.getElementById('sliderMaxLossAmount').value=v;
+    const b=document.getElementById('badgeMaxLossAmount'); if(b) b.textContent='$'+v;
+  } else if(type==='percent'){
+    const v=document.getElementById('maxLossPercent').value;
+    document.getElementById('sliderMaxLossPercent').value=v;
+    const b=document.getElementById('badgeMaxLossPercent'); if(b) b.textContent=v+'%';
+  } else if(type==='count'){
+    const v=document.getElementById('maxTradeCount').value;
+    document.getElementById('sliderMaxTradeCount').value=v;
+    const b=document.getElementById('badgeMaxTradeCount'); if(b) b.textContent=v+'회';
+  } else if(type==='capital'){
+    const v=document.getElementById('initialCapital').value;
+    document.getElementById('sliderInitialCapital').value=v;
+    const b=document.getElementById('badgeInitialCapital'); if(b) b.textContent='$'+Number(v).toLocaleString();
+  }
+  updateLossCollapsedValues(); updateLossUI();
+}
+function syncLossInput(type){
+  if(type==='amount'){
+    const v=document.getElementById('sliderMaxLossAmount').value;
+    document.getElementById('maxLossAmount').value=v;
+    const b=document.getElementById('badgeMaxLossAmount'); if(b) b.textContent='$'+v;
+  } else if(type==='percent'){
+    const v=document.getElementById('sliderMaxLossPercent').value;
+    document.getElementById('maxLossPercent').value=v;
+    const b=document.getElementById('badgeMaxLossPercent'); if(b) b.textContent=v+'%';
+  } else if(type==='count'){
+    const v=document.getElementById('sliderMaxTradeCount').value;
+    document.getElementById('maxTradeCount').value=v;
+    const b=document.getElementById('badgeMaxTradeCount'); if(b) b.textContent=v+'회';
+  } else if(type==='capital'){
+    const v=document.getElementById('sliderInitialCapital').value;
+    document.getElementById('initialCapital').value=v;
+    const b=document.getElementById('badgeInitialCapital'); if(b) b.textContent='$'+Number(v).toLocaleString();
+  }
+  updateLossCollapsedValues(); updateLossUI();
+}
+
+function toggleSubLoss(type){
+  try{
+    const capType=type.charAt(0).toUpperCase()+type.slice(1);
+    const el=document.getElementById('maxLoss'+capType+'Toggle');
+    const isChecked=el?el.checked:false;
+    myData['maxLoss'+capType+'Active']=isChecked;
+    const row=document.getElementById('rowMaxLoss'+capType);
+    if(row){ if(isChecked) row.classList.remove('disabled'); else row.classList.add('disabled'); }
+    const inp=document.getElementById('maxLoss'+capType);
+    if(inp){ inp.disabled=!isChecked; }
+    saveMyData(); updateLossUI(); updateLossCollapsedValues();
+  }catch(e){}
+}
+function saveLossSettings(){ try{ const a=parseFloat(document.getElementById('maxLossAmount').value); const p=parseFloat(document.getElementById('maxLossPercent').value); const c=parseFloat(document.getElementById('initialCapital').value); const cnt=parseInt(document.getElementById('maxTradeCount').value); if(a) myData.maxLossAmount=a; if(p) myData.maxLossPercent=p; if(c) myData.initialCapital=c; if(cnt) myData.maxTradeCount=cnt; saveMyData(); updateLossUI(); updateLossCollapsedValues(); }catch(e){} }
+function savePosCloseSettings(){ try{
+  const p=parseFloat(document.getElementById('posClosePercent').value);
+  const a=parseFloat(document.getElementById('posCloseAmount').value);
+  if(p) myData.posClosePercent=p;
+  if(a) myData.posCloseAmount=a;
+  const tp=document.getElementById('togglePosPercent'); if(tp) myData.posClosePercentActive=tp.checked;
+  const ta=document.getElementById('togglePosAmount'); if(ta) myData.posCloseAmountActive=ta.checked;
+  saveMyData();
+  updatePosCloseCollapsedValues();
+}catch(e){} }
+function saveNasdaqRebuySettings(){ try{
+  const e=document.getElementById('nasdaqEntryBasis').value;
+  const c=document.getElementById('nasdaqContracts').value;
+  const t=document.getElementById('nasdaqTargetPercent').value;
+  const s=document.getElementById('nasdaqStopPercent').value;
+  if(e) myData.nasdaqEntryBasis=e;
+  if(c) myData.nasdaqContracts=c;
+  if(t) myData.nasdaqTargetPercent=t;
+  if(s) myData.nasdaqStopPercent=s;
+  // toggle states
+  const te=document.getElementById('toggleEntry'); if(te) myData.nasdaqEntryActive=te.checked;
+  const tc=document.getElementById('toggleContract'); if(tc) myData.nasdaqContractActive=tc.checked;
+  const tt=document.getElementById('toggleTarget'); if(tt) myData.nasdaqTargetActive=tt.checked;
+  const ts=document.getElementById('toggleStop'); if(ts) myData.nasdaqStopActive=ts.checked;
+  saveMyData();
+  updateNasdaqCollapsedValues();
+  // sync badge and slider
+  syncNasdaqSlider('entry'); syncNasdaqSlider('contract'); syncNasdaqSlider('target'); syncNasdaqSlider('stop');
+  // 하단 ③ 매매 실행에 적용
+  try{
+    const entryNum=parseFloat(e)||25000;
+    const targetNum=entryNum * (1 + (parseFloat(t)||0.5)/100);
+    const stopNum=entryNum * (1 - (parseFloat(s)||0.3)/100);
+    const ep=document.getElementById('entryPrice'); if(ep) ep.value=entryNum;
+    const tp=document.getElementById('targetPrice'); if(tp) tp.value=targetNum.toFixed(2);
+    const sp=document.getElementById('stopPrice'); if(sp) sp.value=stopNum.toFixed(2);
+    const cp=document.getElementById('contracts'); if(cp) cp.value=c||1;
+    if(typeof updateCalc==='function') updateCalc();
+    const statusEl=document.getElementById('nasdaqRebuyStatus'); if(statusEl) statusEl.textContent='적용완료';
+    const marketEl=document.getElementById('nasdaqMarket'); if(marketEl) marketEl.textContent='NASDAQ '+entryNum;
+  }catch(e2){}
+  if(typeof tgLog==='function') tgLog('나스닥 재매수 설정 저장 + ③ 매매 실행에 적용: 진입 '+e+' / '+c+'계약 / 목표 '+t+'% / 손절 '+s+'%');
+  // 시각적 피드백
+  try{
+    const btn=document.querySelector('#nasdaqRebuyConfig button'); if(btn){ const orig=btn.textContent; btn.textContent='✅ 저장 완료!'; btn.style.background='#22c55e'; setTimeout(()=>{ btn.textContent=orig; },1500); }
+  }catch(e3){}
+}catch(e){ console.error(e); } }
+function updateCurrentPos(){ try{
+  const entry=parseFloat(document.getElementById('currentEntryPrice').value)||25000;
+  const cur=parseFloat(document.getElementById('currentMarketPrice').value)||24800;
+  const cont=parseInt(document.getElementById('currentContracts').value)||1;
+  const pct=(cur-entry)/entry*100;
+  const amt=(cur-entry)*2*cont;
+  const el1=document.getElementById('entryVsPercent'); if(el1) el1.textContent=pct.toFixed(2)+"%";
+  const el2=document.getElementById('entryVsAmount'); if(el2) el2.textContent="$"+amt.toFixed(0);
+  // badge sync
+  const bE=document.getElementById('badgeCurEntry'); if(bE) bE.textContent=entry;
+  const bM=document.getElementById('badgeCurMarket'); if(bM) bM.textContent=cur;
+  const bC=document.getElementById('badgeCurContract'); if(bC) bC.textContent=cont;
+  const sE=document.getElementById('sliderCurEntry'); if(sE) sE.value=entry;
+  const sM=document.getElementById('sliderCurMarket'); if(sM) sM.value=cur;
+  const sC=document.getElementById('sliderCurContract'); if(sC) sC.value=cont;
+  const iE=document.getElementById('currentEntryPrice'); if(iE) iE.value=entry;
+  const iM=document.getElementById('currentMarketPrice'); if(iM) iM.value=cur;
+  const iC=document.getElementById('currentContracts'); if(iC) iC.value=cont;
+}catch(e){} }
+function updateCalc(){ try{ const e=parseFloat(document.getElementById('entryPrice').value), t=parseFloat(document.getElementById('targetPrice').value), s=parseFloat(document.getElementById('stopPrice').value), c=parseInt(document.getElementById('contracts').value)||1; if(e&&t&&s){ document.getElementById('expProfit').textContent="$"+calcProfit(e,t,c,true).toFixed(2); document.getElementById('expLoss').textContent="$"+calcProfit(e,s,c,true).toFixed(2); } }catch(e){} }
+function saveSettings(){ try{ const acc=document.getElementById('brokerAccountInput').value.trim(); if(acc&&myData) myData.account=acc; saveMyData(); bindMainSliders(); initSoloSymbols(); updateSoloUserName(); updateUI(); tgLog("저장: "+acc); }catch(e){} }
+function executeRebuy(){
+  try{
+    // 상단 나스닥 설정이 있으면 그 설정으로, 없으면 하단 입력값으로 재매수 실행
+    const eTop=document.getElementById('nasdaqEntryBasis');
+    if(eTop && eTop.value){
+      saveNasdaqRebuySettings();
+      document.getElementById('entryPrice').scrollIntoView({behavior:'smooth'});
+      if(typeof tgLog==='function') tgLog('③ 매매 실행 - 재매수 설정 적용 (나스닥 전용): '+eTop.value);
+      alert('나스닥 재매수 설정이 ③ 매매 실행에 적용되었습니다.\n진입: '+eTop.value+' / 계약: '+document.getElementById('nasdaqContracts').value);
+    }else{
+      const e=document.getElementById('entryPrice').value;
+      const t=document.getElementById('targetPrice').value;
+      const s=document.getElementById('stopPrice').value;
+      const c=document.getElementById('contracts').value;
+      alert('재매수 실행: 진입 '+e+' / 목표 '+t+' / 손절 '+s+' / '+c+'계약');
+      if(typeof tgLog==='function') tgLog('재매수 실행: '+e+' / '+t+' / '+s);
+    }
+  }catch(e){ alert('재매수 실행 오류: '+e.message); }
+}
+function handleReapplyToggle(el){ if(el.checked) setTimeout(()=>el.checked=false,2000); }
+function checkAdminApproval(){}
+
+
+// ===== ④ 재매수 설정 (나 홀로 매매 하는 종목) =====
+const SOLO_SYMBOLS = [
+  {id:'GOLD', name:'GOLD', desc:'금 선물'},
+  {id:'SP500', name:'S&P500', desc:'S&P500'},
+  {id:'TSLA', name:'테슬라', desc:'TSLA'},
+  {id:'NASA', name:'우주항공청', desc:'우주항공'},
+  {id:'QQQ', name:'QQQ', desc:'나스닥100'},
+  {id:'SPY', name:'SPY', desc:'S&P500 ETF'},
+  {id:'META', name:'META', desc:'META'},
+  {id:'AAPL', name:'AAPL(APPLE)', desc:'애플'},
+  {id:'MSFT', name:'MSFT', desc:'마이크로소프트'},
+  {id:'NVDA', name:'NVDA', desc:'엔비디아'},
+  {id:'AMZN', name:'AMZN', desc:'아마존'},
+  {id:'GOOGL', name:'GOOGL', desc:'구글'},
+  {id:'SAMSUNG', name:'삼성전자', desc:'한국 - 삼성전자'},
+  {id:'HYNIX', name:'SK하이닉스', desc:'한국 - 하이닉스'},
+  {id:'KAKAO', name:'카카오', desc:'한국 - 카카오'},
+  {id:'NAVER', name:'NAVER', desc:'한국 - 네이버'}
+];
+let selectedSoloSymbol = null;
+let isSoloCardCollapsed = true;
+
+
+function updateSoloUserName(){
+  try{
+    const name = (myData && (myData.name || myData.id)) || "USER";
+    const el = document.getElementById('soloUserNameDisplay');
+    if(el) el.textContent = '"' + name + '"';
+    const el2 = document.getElementById('soloMainDesc');
+    // Keep original OFF text, don't overwrite
+  }catch(e){}
+}
+
+function initSoloSymbols(){
+  try{ updateSoloUserName(); }catch(e){}
+  const list=document.getElementById('soloSymbolList');
+  if(!list) return;
+  list.innerHTML = SOLO_SYMBOLS.map(s=>{
+    const data = (myData && myData.soloRebuy && myData.soloRebuy[s.id]) || {};
+    const isActive = data.isActive ? true : false;
+    const bg = isActive ? '#1a3a1a' : '#262831';
+    const border = isActive ? '#22c55e' : '#3a3d4a';
+    const badge = isActive ? '<span style="background:#22c55e;color:#000;padding:2px 6px;border-radius:8px;font-size:10px">ON</span>' : '';
+    // 상태별 동그라미 1개만 표시 - 우선순위: 손실(빨강) > 수익(초록) > 진입(노랑)
+    const hasEntered = data.hasEntered || data.entryExecuted || false;
+    const hasProfit = data.hasProfitClosed || data.profitClosed || false;
+    const hasLoss = data.hasLossClosed || data.lossClosed || false;
+    let singleDot = '';
+    let statusText = '';
+    if(hasLoss){
+      singleDot = '<div style="display:inline-block;width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid #1a1a1a;box-shadow:0 0 8px rgba(239,68,68,0.6)" title="손실청산"></div>';
+      statusText = '손실청산';
+    } else if(hasProfit){
+      singleDot = '<div style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:50%;border:2px solid #1a1a1a;box-shadow:0 0 8px rgba(34,197,94,0.6)" title="수익청산"></div>';
+      statusText = '수익청산';
+    } else if(hasEntered){
+      singleDot = '<div style="display:inline-block;width:18px;height:18px;background:#facc15;border-radius:50%;border:2px solid #1a1a1a;box-shadow:0 0 8px rgba(250,204,21,0.6)" title="진입완료"></div>';
+      statusText = '진입완료';
+    }
+    // 잔여수량 표시 - 수량은 동그라미 지정 안함
+    const totalQty = data.quantity || 1;
+    const remainingQty = data.remainingQty !== undefined ? data.remainingQty : totalQty;
+    const entryPriceText = data.entryPrice ? data.entryPrice.toLocaleString() : '미설정';
+    const summary = data.entryPrice ? entryPriceText + ' / 잔여수량: ' + remainingQty + '개' : '미설정';
+    return `<div onclick="selectSoloSymbol('${s.id}')" id="soloBtn_${s.id}" style="background:${bg};border:1px solid ${border};border-radius:12px;padding:12px;cursor:pointer;text-align:center;transition:0.2s;position:relative">
+      <div style="position:absolute;top:6px;right:6px">${singleDot}</div>
+      <div style="font-size:14px;font-weight:900">${s.name} ${badge}</div>
+      <div style="font-size:11px;color:#888;margin-top:3px">${s.desc}</div>
+      <div style="font-size:12px;color:#22c55e;margin-top:6px;font-weight:bold" id="soloSummary_${s.id}">${summary}</div>
+      ${singleDot ? '<div style="margin-top:6px;display:flex;justify-content:center;align-items:center;gap:4px"><span style="font-size:10px;color:#888">'+statusText+'</span></div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleSoloCard(){
+  const body=document.getElementById('soloCardBody');
+  const btn=document.getElementById('soloExpandBtn');
+  const desc=document.getElementById('soloMainDesc');
+  if(!body||!btn) return;
+  if(isSoloCardCollapsed){
+    body.style.display='block';
+    btn.textContent='▲ 접기 - 종목 LIST 숨기기';
+    if(desc) desc.textContent='ON: 나 홀로 매매 종목 적용 중 - 종목 LIST 표시됨 (종목 클릭 시 진입가대비 손절/청산 세부설정 표시)';
+    isSoloCardCollapsed=false;
+    if(typeof initSoloSymbols==='function') initSoloSymbols();
+  }else{
+    body.style.display='none';
+    btn.textContent='▼ 펼치기 - 클릭하여 종목 LIST 보기';
+    if(desc) desc.textContent='OFF: 나 홀로 매매 종목 미적용 - 클릭하여 종목 LIST 보기 (클릭 전에는 하단 아무것도 없음)';
+    isSoloCardCollapsed=true;
+    // hide detail when collapsing main
+    const detail=document.getElementById('soloRebuyDetail');
+    if(detail) detail.style.display='none';
+  }
+}
+
+function selectSoloSymbol(symbolId){
+  // save previous
+  if(selectedSoloSymbol) saveSoloSymbolSettings(selectedSoloSymbol);
+  selectedSoloSymbol = symbolId;
+  // highlight
+  SOLO_SYMBOLS.forEach(s=>{
+    const el=document.getElementById('soloBtn_'+s.id);
+    if(el){
+      if(s.id===symbolId){ el.style.border='2px solid #22c55e'; el.style.transform='scale(1.05)'; }
+      else { el.style.border='1px solid #3a3d4a'; el.style.transform='scale(1)'; }
+    }
+  });
+  renderSoloDetail(symbolId);
+}
+
+function getSoloData(symbolId){
+  if(!myData) myData={};
+  if(!myData.soloRebuy) myData.soloRebuy={};
+  if(!myData.soloRebuy[symbolId]){
+    myData.soloRebuy[symbolId]={
+      isActive:false,
+      entryPrice:25000,
+      targetPrice:25125,
+      stopPrice:24750,
+      quantity:1,
+      hasEntered:false,
+      hasProfitClosed:false,
+      hasLossClosed:false,
+      entryExecuted:false,
+      profitClosed:false,
+      lossClosed:false,
+      remainingQty:1,
+      entryActive:true,
+      targetActive:true,
+      stopActive:true,
+      quantityActive:true,
+      currentPrice:24800,
+      // legacy compat
+      entryBasis:25000,
+      contracts:1,
+      targetPercent:0.5,
+      stopPercent:-1.0,
+      posClosePercent:2,
+      posCloseAmount:100,
+      posClosePercentActive:true,
+      posCloseAmountActive:true,
+      currentEntry:25000,
+      currentMarket:24800,
+      currentContracts:1,
+      nasdaqEntryActive:true,
+      nasdaqContractActive:true,
+      nasdaqTargetActive:true,
+      nasdaqStopActive:true
+    };
+  } else {
+    // migrate old data to new fields if missing
+    const d=myData.soloRebuy[symbolId];
+    if(d.entryPrice===undefined) d.entryPrice=d.currentEntry||d.entryBasis||25000;
+    if(d.targetPrice===undefined) d.targetPrice=d.entryPrice*1.005;
+    if(d.stopPrice===undefined) d.stopPrice=d.entryPrice*0.99;
+    if(d.quantity===undefined) d.quantity=d.currentContracts||d.contracts||1;
+    if(d.currentPrice===undefined) d.currentPrice=d.currentMarket||24800;
+    if(d.entryActive===undefined) d.entryActive=true;
+    if(d.targetActive===undefined) d.targetActive=true;
+    if(d.stopActive===undefined) d.stopActive=true;
+    if(d.quantityActive===undefined) d.quantityActive=true;
+  }
+  return myData.soloRebuy[symbolId];
+}
+
+function renderSoloDetail(symbolId){
+  const data=getSoloData(symbolId);
+  const sym=SOLO_SYMBOLS.find(s=>s.id===symbolId);
+  const detail=document.getElementById('soloRebuyDetail');
+  if(!detail) return;
+  detail.style.display='block';
+  const currentPrice = data.currentPrice || data.currentMarket || 24800;
+  const entryPctVsCurrent = currentPrice ? ((data.entryPrice - currentPrice)/currentPrice*100).toFixed(2) : '0.00';
+  const targetDiff = data.targetPrice - data.entryPrice;
+  const targetPctVsEntry = data.entryPrice ? (targetDiff/data.entryPrice*100).toFixed(2) : '0.00';
+  const stopDiff = data.stopPrice - data.entryPrice;
+  const stopPctVsEntry = data.entryPrice ? (stopDiff/data.entryPrice*100).toFixed(2) : '0.00';
+  detail.innerHTML = `
+  <div style="background:linear-gradient(90deg,#0f1f0f,#1f1f25);border:1px solid #22c55e;border-radius:12px;padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:14px;font-weight:bold">📈 ${sym.name} (${sym.desc}) - 세부 설정 <span style="background:#22c55e;color:#000;padding:2px 8px;border-radius:10px;font-size:10px">${data.isActive?'ON':'OFF'}</span></div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#1a2a0a,#2a2a1a);border:1px solid #facc15;border-radius:10px;padding:10px 14px;box-shadow:0 0 12px rgba(250,204,21,0.25)">
+          <div style="font-size:11px;color:#facc15;font-weight:bold;letter-spacing:1px">📡 현재 차트 실시간 가격</div>
+          <div style="font-size:28px;font-weight:900;color:#facc15;text-shadow:0 0 8px rgba(250,204,21,0.8),0 0 16px rgba(250,204,21,0.4);letter-spacing:1px" id="solo_${symbolId}_livePrice">${currentPrice.toLocaleString()}</div>
+          <div style="background:#facc15;color:#000;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:900;animation:blink 1.5s infinite">LIVE</div>
+          <div style="font-size:10px;color:#888;margin-left:auto">${sym.name}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:#888">활성화</span>
+        <input type="checkbox" class="toggle" ${data.isActive?'checked':''} onchange="toggleSoloActive('${symbolId}', this.checked)">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;background:#262831;border-radius:12px;padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:bold">🔧 진입가 · 목표가 · 청산가 · 수량 (슬라이드 움직이면 입력창 실시간 변경)</div>
+      <div class="expand-btn" onclick="document.getElementById('soloRebuyDetail').style.display='none'">▲ 접기</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <!-- 진입가 -->
+      <div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #22c55e">
+        <div class="toggle-row" style="margin:0 0 10px 0;background:#1a2a1a">
+          <div><div class="toggle-label">진입가</div><div class="toggle-sub">금액(%) 현재가 대비 - 매수</div></div>
+          <input type="checkbox" class="toggle sub" ${data.entryActive!==false?'checked':''} onchange="data.entryActive=this.checked; saveMyData();">
+        </div>
+        <div style="font-size:11px;color:#888;display:flex;justify-content:space-between"><span>값</span><span style="background:#22c55e;color:#000;padding:5px 12px;border-radius:10px;font-size:14px;font-weight:900;box-shadow:0 0 6px rgba(34,197,94,0.5)" id="solo_${symbolId}_badgeEntry">${data.entryPrice} (${entryPctVsCurrent}%)</span></div>
+        <div class="input-slider-row" style="margin-top:6px">
+          <input class="input input-1-3" id="solo_${symbolId}_inputEntry" type="number" value="${data.entryPrice}" min="1000" max="100000" step="10" style="padding:10px;font-size:15px;font-weight:bold">
+          <input type="range" class="slider-2-3" id="solo_${symbolId}_sliderEntry" value="${data.entryPrice}" min="1000" max="100000" step="10">
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:4px" id="solo_${symbolId}_entryDetail">현재가 대비 ${entryPctVsCurrent}%</div>
+      </div>
+      <!-- 목표가 -->
+      <div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a2a35">
+        <div class="toggle-row" style="margin:0 0 10px 0;background:#1a2332">
+          <div><div class="toggle-label">목표가</div><div class="toggle-sub">진입가 대비 금액(%)</div></div>
+          <input type="checkbox" class="toggle sub" ${data.targetActive!==false?'checked':''} onchange="data.targetActive=this.checked; saveMyData();">
+        </div>
+        <div style="font-size:11px;color:#888;display:flex;justify-content:space-between"><span>값</span><span style="background:#3b82f6;color:#fff;padding:5px 12px;border-radius:10px;font-size:14px;font-weight:900;box-shadow:0 0 6px rgba(59,130,246,0.5)" id="solo_${symbolId}_badgeTarget">${data.targetPrice} (${targetPctVsEntry}%)</span></div>
+        <div class="input-slider-row" style="margin-top:6px">
+          <input class="input input-1-3" id="solo_${symbolId}_inputTarget" type="number" value="${data.targetPrice}" min="1000" max="100000" step="10" style="padding:10px;font-size:15px;font-weight:bold">
+          <input type="range" class="slider-2-3 slider-blue" id="solo_${symbolId}_sliderTarget" value="${data.targetPrice}" min="1000" max="100000" step="10">
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:4px" id="solo_${symbolId}_targetDetail">진입가 대비 ${targetDiff.toFixed(0)} (${targetPctVsEntry}%)</div>
+      </div>
+      <!-- 청산가 -->
+      <div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #4a2a2a">
+        <div class="toggle-row" style="margin:0 0 10px 0;background:#2a1f1f">
+          <div><div class="toggle-label">청산가 (손실)</div><div class="toggle-sub">진입가 대비 금액(%) - 청산</div></div>
+          <input type="checkbox" class="toggle sub" ${data.stopActive!==false?'checked':''} onchange="data.stopActive=this.checked; saveMyData();">
+        </div>
+        <div style="font-size:11px;color:#888;display:flex;justify-content:space-between"><span>값</span><span style="background:#ef4444;color:#fff;padding:5px 12px;border-radius:10px;font-size:14px;font-weight:900;box-shadow:0 0 6px rgba(239,68,68,0.5)" id="solo_${symbolId}_badgeStop">${data.stopPrice} (${stopPctVsEntry}%)</span></div>
+        <div class="input-slider-row" style="margin-top:6px">
+          <input class="input input-1-3" id="solo_${symbolId}_inputStop" type="number" value="${data.stopPrice}" min="1000" max="100000" step="10" style="padding:10px;font-size:15px;font-weight:bold">
+          <input type="range" class="slider-2-3 slider-red" id="solo_${symbolId}_sliderStop" value="${data.stopPrice}" min="1000" max="100000" step="10">
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:4px" id="solo_${symbolId}_stopDetail">진입가 대비 ${stopDiff.toFixed(0)} (${stopPctVsEntry}%)</div>
+      </div>
+      <!-- 수량 -->
+      <div class="field-group" style="background:#1f1f25;border-radius:12px;padding:12px;border:1px solid #2a3a5a">
+        <div class="toggle-row" style="margin:0 0 10px 0;background:#1a2332">
+          <div><div class="toggle-label">수량</div><div class="toggle-sub">숫자 - 지정 수량만큼</div></div>
+          <input type="checkbox" class="toggle sub" ${data.quantityActive!==false?'checked':''} onchange="data.quantityActive=this.checked; saveMyData();">
+        </div>
+        <div style="font-size:11px;color:#888;display:flex;justify-content:space-between"><span>값</span><span style="background:#f59e0b;color:#000;padding:5px 14px;border-radius:10px;font-size:15px;font-weight:900;box-shadow:0 0 6px rgba(245,158,11,0.5)" id="solo_${symbolId}_badgeQty">${data.quantity}개</span></div>
+        <div class="input-slider-row" style="margin-top:6px">
+          <input class="input input-1-3" id="solo_${symbolId}_inputQty" type="number" value="${data.quantity}" min="1" max="100" step="1" style="padding:10px;font-size:15px;font-weight:bold">
+          <input type="range" class="slider-2-3" id="solo_${symbolId}_sliderQty" value="${data.quantity}" min="1" max="100" step="1">
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:4px" id="solo_${symbolId}_qtyDetail">${data.quantity}개 지정</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:#0f0f11;border-radius:10px;padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="background:#1a1a1a;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#888">진입가 vs 현재가</div><div style="font-size:14px;font-weight:bold;color:#22c55e" id="solo_${symbolId}_vsCurrent">${entryPctVsCurrent}%</div></div>
+      <div style="background:#1a1a1a;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#888">목표가 수익</div><div style="font-size:14px;font-weight:bold;color:#3b82f6" id="solo_${symbolId}_vsTarget">${targetPctVsEntry}%</div></div>
+      <div style="background:#1a1a1a;border-radius:8px;padding:8px;text-align:center"><div style="font-size:10px;color:#888">청산가 손실</div><div style="font-size:14px;font-weight:bold;color:#ef4444" id="solo_${symbolId}_vsStop">${stopPctVsEntry}%</div></div>
+    </div>
+  </div>
+  <div style="margin-top:12px;background:#1a1a1a;border-radius:10px;padding:12px;border:1px solid #2a2a2a">
+    <div style="font-size:13px;font-weight:bold;margin-bottom:8px">📍 종목 LIST 동그라미 표시 상태 (시뮬레이션)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <label style="display:flex;align-items:center;gap:6px;background:#2a2a0a;border:1px solid #facc15;border-radius:8px;padding:8px;cursor:pointer">
+        <input type="checkbox" ${data.hasEntered?'checked':''} onchange="updateSoloTradeStatus('${symbolId}','entry',this.checked)">
+        <div style="width:18px;height:18px;background:#facc15;border-radius:50%;border:2px solid #1a1a1a"></div>
+        <span style="font-size:12px">진입 완료 (노랑)</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;background:#0a2a0a;border:1px solid #22c55e;border-radius:8px;padding:8px;cursor:pointer">
+        <input type="checkbox" ${data.hasProfitClosed?'checked':''} onchange="updateSoloTradeStatus('${symbolId}','profit',this.checked)">
+        <div style="width:18px;height:18px;background:#22c55e;border-radius:50%;border:2px solid #1a1a1a"></div>
+        <span style="font-size:12px">수익청산 (초록)</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;background:#2a0a0a;border:1px solid #ef4444;border-radius:8px;padding:8px;cursor:pointer">
+        <input type="checkbox" ${data.hasLossClosed?'checked':''} onchange="updateSoloTradeStatus('${symbolId}','loss',this.checked)">
+        <div style="width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid #1a1a1a"></div>
+        <span style="font-size:12px">손실청산 (빨강)</span>
+      </label>
+    </div>
+    <div style="font-size:11px;color:#888;margin-top:6px">• 진입가 지정하여 진입한 종목: 노랑 동그라미 / 진입 지정했는데 진입 못한 경우 표시 안함<br>• 목표가 수익청산: 초록 동그라미 / 손실청산: 빨강 동그라미 - LIST에 슬라이드 동그라미 크기로 표시</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+    <button style="background:#22c55e;color:#000;border:none;border-radius:8px;padding:12px;font-weight:bold;cursor:pointer" onclick="saveSoloSymbolSettings('${symbolId}')">💾 저장 + 적용</button>
+    <button style="background:#262831;color:#fff;border:1px solid #3a3d4a;border-radius:8px;padding:12px;cursor:pointer" onclick="document.getElementById('soloRebuyDetail').style.display='none'">닫기</button>
+  </div>
+  `;
+  // Attach bidirectional sync with JS after innerHTML
+  setTimeout(()=>{
+    const bind = (inputId, sliderId, field, calcFn)=>{
+      const inp=document.getElementById(inputId);
+      const sld=document.getElementById(sliderId);
+      if(!inp||!sld) return;
+      inp.addEventListener('input', ()=>{
+        sld.value=inp.value;
+        updateSoloField(symbolId, field, inp.value);
+        if(calcFn) calcFn();
+        updateSoloCalc(symbolId);
+      });
+      sld.addEventListener('input', ()=>{
+        inp.value=sld.value;
+        updateSoloField(symbolId, field, sld.value);
+        if(calcFn) calcFn();
+        updateSoloCalc(symbolId);
+      });
+    };
+    bind('solo_'+symbolId+'_inputEntry','solo_'+symbolId+'_sliderEntry','entryPrice');
+    bind('solo_'+symbolId+'_inputTarget','solo_'+symbolId+'_sliderTarget','targetPrice');
+    bind('solo_'+symbolId+'_inputStop','solo_'+symbolId+'_sliderStop','stopPrice');
+    bind('solo_'+symbolId+'_inputQty','solo_'+symbolId+'_sliderQty','quantity');
+    updateSoloCalc(symbolId);
+  }, 50);
+}function updateSoloField(symbolId, field, value){
+  const data=getSoloData(symbolId);
+  if(field.includes('Active')) data[field]= (value===true || value==='true' || (typeof value==='boolean' && value));
+  else if(!isNaN(value) && field!=='id' && field!=='name') data[field]=parseFloat(value);
+  else data[field]=value;
+  if(!myData.soloRebuy) myData.soloRebuy={};
+  myData.soloRebuy[symbolId]=data;
+  saveMyData();
+  // update summary badge
+  const sumEl=document.getElementById('soloSummary_'+symbolId);
+  if(sumEl) sumEl.textContent=data.entryBasis+' / '+data.contracts+'계약';
+}
+
+
+
+function updateSoloCalc(symbolId){
+  try{
+    const data=getSoloData(symbolId);
+    const currentPrice = data.currentPrice || 24800;
+    const entry = parseFloat(data.entryPrice)||25000;
+    const target = parseFloat(data.targetPrice)||25125;
+    const stop = parseFloat(data.stopPrice)||24750;
+    const qty = parseInt(data.quantity)||1;
+    const entryPctVsCurrent = currentPrice ? ((entry - currentPrice)/currentPrice*100) : 0;
+    const targetDiff = target - entry;
+    const targetPctVsEntry = entry ? (targetDiff/entry*100) : 0;
+    const stopDiff = stop - entry;
+    const stopPctVsEntry = entry ? (stopDiff/entry*100) : 0;
+
+    const setText=(id,txt)=>{ const el=document.getElementById(id); if(el) el.textContent=txt; };
+
+    setText('solo_'+symbolId+'_badgeEntry', entry.toLocaleString() + ' (' + entryPctVsCurrent.toFixed(2) + '%)');
+    setText('solo_'+symbolId+'_badgeTarget', target.toLocaleString() + ' (' + targetPctVsEntry.toFixed(2) + '%)');
+    setText('solo_'+symbolId+'_badgeStop', stop.toLocaleString() + ' (' + stopPctVsEntry.toFixed(2) + '%)');
+    setText('solo_'+symbolId+'_badgeQty', qty + '개');
+    setText('solo_'+symbolId+'_entryDetail', '현재가 대비 ' + entryPctVsCurrent.toFixed(2) + '%');
+    setText('solo_'+symbolId+'_targetDetail', '진입가 대비 ' + targetDiff.toFixed(0) + ' (' + targetPctVsEntry.toFixed(2) + '%)');
+    setText('solo_'+symbolId+'_stopDetail', '진입가 대비 ' + stopDiff.toFixed(0) + ' (' + stopPctVsEntry.toFixed(2) + '%)');
+    setText('solo_'+symbolId+'_qtyDetail', qty + '개 지정');
+    setText('solo_'+symbolId+'_vsCurrent', entryPctVsCurrent.toFixed(2) + '%');
+    setText('solo_'+symbolId+'_vsTarget', targetPctVsEntry.toFixed(2) + '%');
+    setText('solo_'+symbolId+'_vsStop', stopPctVsEntry.toFixed(2) + '%');
+    setText('solo_'+symbolId+'_livePrice', currentPrice.toLocaleString());
+
+    if(myData && myData.soloRebuy && myData.soloRebuy[symbolId]){
+      myData.soloRebuy[symbolId].entryPrice=entry;
+      myData.soloRebuy[symbolId].targetPrice=target;
+      myData.soloRebuy[symbolId].stopPrice=stop;
+      myData.soloRebuy[symbolId].quantity=qty;
+      saveMyData();
+    }
+  }catch(e){ console.error(e); }
+}
+function updateSoloCurrentPos(symbolId){ updateSoloCalc(symbolId); }
+
+
+
+function bindMainSliders(){
+  const pairs=[
+    ['maxLossAmount','sliderMaxLossAmount'],
+    ['maxLossPercent','sliderMaxLossPercent'],
+    ['maxTradeCount','sliderMaxTradeCount'],
+    ['initialCapital','sliderInitialCapital'],
+    ['posClosePercent','sliderPosPercent'],
+    ['posCloseAmount','sliderPosAmount'],
+    ['currentEntryPrice','sliderCurEntry'],
+    ['currentMarketPrice','sliderCurMarket'],
+    ['currentContracts','sliderCurContract'],
+    ['nasdaqEntryBasis','sliderEntry'],
+    ['nasdaqContracts','sliderContract'],
+    ['nasdaqTargetPercent','sliderTarget'],
+    ['nasdaqStopPercent','sliderStop']
+  ];
+  pairs.forEach(([inputId, sliderId])=>{
+    const inp=document.getElementById(inputId);
+    const sld=document.getElementById(sliderId);
+    if(!inp||!sld) return;
+    if(inp._bound) return;
+    inp.addEventListener('input', ()=>{ sld.value=inp.value; });
+    sld.addEventListener('input', ()=>{ inp.value=sld.value; const badgeId='badge'+inputId.charAt(0).toUpperCase()+inputId.slice(1); const badge=document.getElementById(badgeId); if(badge){ badge.textContent=inp.value + (inputId.includes('Percent')?'%': inputId.includes('Amount')?'':''); } if(inputId.startsWith('posClose')||inputId.startsWith('current')){ if(typeof updatePosCloseCollapsedValues==='function') updatePosCloseCollapsedValues(); if(typeof updateCurrentPos==='function') updateCurrentPos(); } if(inputId.startsWith('nasdaq')||inputId.startsWith('maxLoss')){ if(typeof updateNasdaqCollapsedValues==='function') updateNasdaqCollapsedValues(); if(typeof updateLossCollapsedValues==='function') updateLossCollapsedValues(); } });
+    inp._bound=true;
+  });
+}
+
+
+function updateSoloTradeStatus(symbolId, type, value){
+  const data=getSoloData(symbolId);
+  if(type==='entry') { data.hasEntered=value; data.entryExecuted=value; if(value) data.remainingQty=data.quantity; else data.remainingQty=data.quantity; }
+  if(type==='profit') { data.hasProfitClosed=value; data.profitClosed=value; if(value){ data.remainingQty=0; data.hasEntered=false; } }
+  if(type==='loss') { data.hasLossClosed=value; data.lossClosed=value; if(value){ data.remainingQty=0; data.hasEntered=false; } }
+  // Ensure only one status at a time - 1 dot only
+  if(type==='entry' && value){ data.hasProfitClosed=false; data.hasLossClosed=false; data.profitClosed=false; data.lossClosed=false; }
+  if(type==='profit' && value){ data.hasLossClosed=false; data.lossClosed=false; }
+  if(type==='loss' && value){ data.hasProfitClosed=false; data.profitClosed=false; }
+  myData.soloRebuy[symbolId]=data;
+  saveMyData();
+  initSoloSymbols();
+  // Update detail view if open
+  if(selectedSoloSymbol===symbolId) renderSoloDetail(symbolId);
+}
+
+function toggleSoloActive(symbolId, isActive){
+  const data=getSoloData(symbolId);
+  data.isActive=isActive;
+  myData.soloRebuy[symbolId]=data;
+  saveMyData();
+  initSoloSymbols();
+  if(typeof tgLog==='function') tgLog(`${symbolId} ${isActive?'활성화':'비활성화'}`);
+}
+
+function saveSoloSymbolSettings(symbolId){
+  const data=getSoloData(symbolId);
+  if(!data.hasProfitClosed && !data.hasLossClosed && data.remainingQty===0){
+    data.remainingQty=data.quantity;
+  }
+
+  saveMyData();
+  initSoloSymbols();
+  const detail=document.getElementById('soloRebuyDetail');
+  // feedback
+  if(typeof tgLog==='function') tgLog(`${symbolId} 설정 저장: 진입 ${getSoloData(symbolId).entryBasis} / 목표 ${getSoloData(symbolId).targetPercent}%`);
+  alert(`${symbolId} 설정이 저장되었습니다.`);
+}
+
+function syncSoloSlider(symbolId, type){
+  // entry type sync
+  if(type==='entry'){
+    const inp=document.querySelector(`#soloRebuyDetail input[type=number][value]`); // not used
+  }
+}
+
+function syncSoloSliderInput(symbolId, type, value){
+  const badge=document.getElementById(`solo_${symbolId}_badge${type.charAt(0).toUpperCase()+type.slice(1)}`);
+  if(badge) badge.textContent=value;
+}
+
+function syncSoloCur(symbolId, type, value){
+  const badge=document.getElementById(`solo_${symbolId}_badgeCur${type}`);
+  if(badge) badge.textContent=value;
+  updateSoloCurrentPos(symbolId);
+}
+
+function toggleSoloRow(rowId, isOn){
+  const row=document.getElementById(rowId);
+  if(row){ if(isOn) row.classList.remove('disabled'); else row.classList.add('disabled'); }
+}
+
+function updateSoloCurrentPos(symbolId){
+  try{
+    const data=getSoloData(symbolId);
+    const entry=parseFloat(data.currentEntry)||25000;
+    const cur=parseFloat(data.currentMarket)||24800;
+    const cont=parseInt(data.currentContracts)||1;
+    const pct=(cur-entry)/entry*100;
+    const amt=(cur-entry)*2*cont;
+    const el1=document.getElementById(`solo_${symbolId}_entryVsPercent`); if(el1) el1.textContent=pct.toFixed(2)+'%';
+    const el2=document.getElementById(`solo_${symbolId}_entryVsDetail`); if(el2) el2.textContent=`${entry} → ${cur}`;
+    const el3=document.getElementById(`solo_${symbolId}_entryVsAmount`); if(el3) el3.textContent=`$${amt.toFixed(0)}`;
+    const el4=document.getElementById(`solo_${symbolId}_currentPosInfo`); if(el4) el4.textContent=`진입가 대비 ${pct.toFixed(2)}% / $${amt.toFixed(0)}`;
+  }catch(e){}
+}
+
+function saveSoloSymbolSettingsOld(){}
+
+// ===== 초기화 =====
+async function autoDetect(){
+  try{ const keys=Object.keys(localStorage).filter(k=>k.startsWith("MNQ_MY_DATA_")); if(keys.length>0) return JSON.parse(localStorage.getItem(keys[0])); }catch(e){}
+  return {account:"7020-3101", id:"USER_1", telegram:"@my_telegram", name:"사용자", profit:0, feeTotal:0, maxLossAmount:500, maxLossPercent:5, maxTradeCount:10, initialCapital:10000, posClosePercent:2, posCloseAmount:100, remainDays:30};
+}
+(async()=>{
+  const detected=await autoDetect();
+  myData=JSON.parse(localStorage.getItem("MNQ_MY_DATA_"+detected.id)||JSON.stringify({
+    id: detected.id||"USER_1", name: detected.name||"사용자", account: detected.account||"7020-3101",
+    profit:0, feeTotal:0, history:[], telegram: detected.telegram||"@my_telegram",
+    maxLossAmount:500, maxLossPercent:5, maxTradeCount:10, initialCapital:10000, posClosePercent:2, posCloseAmount:100, remainDays:30,
+    isTrading:true, isCopyMode:false, isTgActive:true, isLossActive:true, isPosCloseActive:false, isNasdaqRebuyActive:false
+  }));
+  document.getElementById('maxLossAmount').value=myData.maxLossAmount||500;
+  document.getElementById('maxLossPercent').value=myData.maxLossPercent||5;
+  document.getElementById('maxTradeCount').value=myData.maxTradeCount||10;
+  document.getElementById('initialCapital').value=myData.initialCapital||10000;
+  document.getElementById('posClosePercent').value=myData.posClosePercent||2;
+  document.getElementById('posCloseAmount').value=myData.posCloseAmount||100;
+  // 나스닥 재매수 값 복원
+  try{
+    document.getElementById('nasdaqEntryBasis').value=myData.nasdaqEntryBasis||25000;
+    document.getElementById('nasdaqContracts').value=myData.nasdaqContracts||1;
+    document.getElementById('nasdaqTargetPercent').value=myData.nasdaqTargetPercent||0.5;
+    document.getElementById('nasdaqStopPercent').value=myData.nasdaqStopPercent||0.3;
+    const te=document.getElementById('toggleEntry'); if(te) te.checked=myData.nasdaqEntryActive!==false;
+    const tc=document.getElementById('toggleContract'); if(tc) tc.checked=myData.nasdaqContractActive!==false;
+    const tt=document.getElementById('toggleTarget'); if(tt) tt.checked=myData.nasdaqTargetActive!==false;
+    const ts=document.getElementById('toggleStop'); if(ts) ts.checked=myData.nasdaqStopActive!==false;
+    // 슬라이더 동기화
+    const slE=document.getElementById('sliderEntry'); if(slE) slE.value=myData.nasdaqEntryBasis||25000;
+    const slC=document.getElementById('sliderContract'); if(slC) slC.value=myData.nasdaqContracts||1;
+    const slT=document.getElementById('sliderTarget'); if(slT) slT.value=myData.nasdaqTargetPercent||0.5;
+    const slS=document.getElementById('sliderStop'); if(slS) slS.value=myData.nasdaqStopPercent||0.3;
+  }catch(e){}
+  isTrading=myData.isTrading!==false; isCopyMode=myData.isCopyMode||false; isTgActive=myData.isTgActive!==false; isLossActive=myData.isLossActive!==false; isPosCloseActive=myData.isPosCloseActive||false; isNasdaqRebuyActive=myData.isNasdaqRebuyActive||false;
+  document.getElementById('tradeToggle').checked=isTrading;
+  document.getElementById('copyToggle').checked=isCopyMode;
+  document.getElementById('tgToggle').checked=isTgActive;
+  document.getElementById('lossToggle').checked=isLossActive;
+  document.getElementById('posCloseToggle').checked=isPosCloseActive;
+  document.getElementById('nasdaqToggle').checked=isNasdaqRebuyActive;
+  // 강제 표시
+  isLossDetailsCollapsed=true; isPosCloseDetailsCollapsed=true; isNasdaqDetailsCollapsed=true;
+  if(isLossActive){ const lc=document.getElementById('lossCollapsed'); if(lc) lc.style.display='flex'; const le=document.getElementById('lossConfig'); if(le) le.style.display='none'; updateLossCollapsedValues(); }
+  if(isPosCloseActive){ const pc=document.getElementById('posCloseCollapsed'); if(pc) pc.style.display='flex'; const pe=document.getElementById('posCloseConfig'); if(pe) pe.style.display='none'; updatePosCloseCollapsedValues(); }
+  if(isNasdaqRebuyActive){ const nc=document.getElementById('nasdaqCollapsed'); if(nc) nc.style.display='flex'; const ne=document.getElementById('nasdaqRebuyConfig'); if(ne) ne.style.display='none'; 
+    // restore sub toggles
+    try{
+      const te=document.getElementById('toggleEntry'); if(te) te.checked=myData.nasdaqEntryActive!==false;
+      const tc=document.getElementById('toggleContract'); if(tc) tc.checked=myData.nasdaqContractActive!==false;
+      const tt=document.getElementById('toggleTarget'); if(tt) tt.checked=myData.nasdaqTargetActive!==false;
+      const ts=document.getElementById('toggleStop'); if(ts) ts.checked=myData.nasdaqStopActive!==false;
+      toggleNasdaqItem('entry', document.getElementById('toggleEntry').checked);
+      toggleNasdaqItem('contract', document.getElementById('toggleContract').checked);
+      toggleNasdaqItem('target', document.getElementById('toggleTarget').checked);
+      toggleNasdaqItem('stop', document.getElementById('toggleStop').checked);
+    }catch(e){}
+    updateNasdaqCollapsedValues(); }
+  toggleTrade(); toggleCopyMode(); toggleTelegram(); toggleLoss(); togglePosClose(); toggleNasdaqRebuy();
+  // 네트워크 감시
+  window.addEventListener('online', ()=>{ internetConnected=true; addSystemLog('NETWORK','network','🟢 인터넷 재접속 성공'); const b=document.getElementById('netStatusBadge'); if(b) b.innerHTML='<span class="status-dot dot-green"></span>인터넷 정상'; });
+  window.addEventListener('offline', ()=>{ internetConnected=false; addSystemLog('NETWORK','error','🔴 인터넷 단절 감지 - 반드시 기록'); const b=document.getElementById('netStatusBadge'); if(b) b.innerHTML='<span class="status-dot dot-red"></span>인터넷 단절'; });
+  setInterval(async()=>{ try{ await fetch('https://www.google.com/generate_204',{mode:'no-cors'}); if(!internetConnected) window.dispatchEvent(new Event('online')); }catch(e){ if(internetConnected) window.dispatchEvent(new Event('offline')); } },30000);
+  (function(){ const last=localStorage.getItem('MNQ_LAST_SESSION'); const now=Date.now(); if(last&&now-parseInt(last)>120000){ addSystemLog('SYSTEM','error','🔄 컴퓨터 재부팅 감지 - 이전 세션 비정상 종료 (반드시 기록)'); setTimeout(()=>addSystemLog('SYSTEM','system','✅ 시스템 시작 완료 - 자동 복구'),2000); } localStorage.setItem('MNQ_LAST_SESSION', now.toString()); setInterval(()=>localStorage.setItem('MNQ_LAST_SESSION', Date.now().toString()),10000); })();
+  setTimeout(()=>{ if(systemLogs.length===0){ addSystemLog('TELEGRAM','telegram','OFF : 핸드폰의 텔레그램 과 연동이 중지 됩니다.'); addSystemLog('TELEGRAM','telegram','ON - 신호 전송'); addSystemLog('SYSTEM','system','💻 시스템 감시 시작 - 인터넷 단절/재접속/재부팅 자동 기록'); } },500);
+  bindMainSliders(); initSoloSymbols(); updateSoloUserName(); updateUI();
+})();
+</script>
+
+<script>
+// ===== 완전 자동화 - USER PC 자동 업데이트 - 2 URL 고정 - ID/비번 불필요 =====
+const USER_PC_VERSION = 56; // 현재 버전 - ADMIN PC에서 변경
+const USER_PC_FORM_URL = "https://mnq-auto.github.io/mnq/user_pc.html"; // 고정 새 URL - 평생 고정 - GitHub Pages 또는 Render
+const NPOINT_VERSION_URL = "https://api.npoint.io/04ac6b88e333695ed90b"; // 고정 현재 URL - version 신호용
+const USER_PC_TELEGRAM_FORM_URL = "https://mnq-auto.github.io/mnq/telegram_form.html"; // 텔레그램폼 고정 URL
+
+async function checkUserPCUpdate(){
+  try{
+    const res = await fetch(NPOINT_VERSION_URL + "?t=" + Date.now(), {cache:"no-store"});
+    const data = await res.json();
+    const latestVer = data.version || USER_PC_VERSION;
+    const latestFormUrl = data.form_url || USER_PC_FORM_URL;
+    const curVer = localStorage.getItem('USER_PC_VER') ? parseInt(localStorage.getItem('USER_PC_VER')) : USER_PC_VERSION;
+    if(latestVer > curVer){
+      const msg = `새 User PC 폼 v${latestVer} 배포됨\n현재 v${curVer} → v${latestVer}\n자동 적용할까요?\n\n새 URL: ${latestFormUrl}`;
+      if(confirm(msg)){
+        localStorage.setItem('USER_PC_VER', latestVer.toString());
+        localStorage.setItem('USER_PC_FORM_URL', latestFormUrl);
+        // 텔레그램폼도 같이 업데이트
+        if(data.telegram_form_url) localStorage.setItem('TELEGRAM_FORM_URL', data.telegram_form_url);
+        try{ addSystemLog('SYSTEM','system',`🔄 자동 업데이트 v${curVer} → v${latestVer} - ${latestFormUrl}`); }catch(e){}
+        // 1초 후 새 URL로 이동 - 완전 자동화
+        setTimeout(()=>{ location.href = latestFormUrl + "?v="+latestVer+"&t="+Date.now(); }, 1000);
+      } else {
+        localStorage.setItem('USER_PC_VER', latestVer.toString()); // 나중에 다시 묻지 않도록
+      }
+    } else {
+      // 버전 같아도 URL 변경 시 업데이트
+      if(latestFormUrl !== USER_PC_FORM_URL && latestFormUrl !== localStorage.getItem('USER_PC_FORM_URL')){
+        console.log("[자동 업데이트] Form URL 변경 감지:", latestFormUrl);
+      }
+    }
+  }catch(e){
+    console.log("[자동 업데이트] 체크 실패 - 인터넷 또는 npoint 오류", e);
+  }
+}
+// 5분마다 자동 체크 + 시작 시 10초 후 체크
+setInterval(checkUserPCUpdate, 300000); // 5분
+setTimeout(checkUserPCUpdate, 10000); // 시작 10초 후
+// 수동 체크 함수 - 콘솔에서 호출 가능
+window.checkUserPCUpdate = checkUserPCUpdate;
+window.USER_PC_VERSION = USER_PC_VERSION;
+window.USER_PC_FORM_URL = USER_PC_FORM_URL;
+console.log(`[완전 자동화] USER PC v${USER_PC_VERSION} - 고정 URL: ${USER_PC_FORM_URL} - version 신호: ${NPOINT_VERSION_URL} - 5분마다 체크`);
+</script>
+
+</body>
+</html>
