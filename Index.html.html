@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>매매확인</title><style>
-body{background:#0a0a0a;color:#e5e5e5;font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;margin:0}
-.wrap{max-width:430px;margin:0 auto;padding:12px 12px 40px}
-.card{background:#111;border:1px solid #262626;border-radius:16px;padding:14px;margin-top:10px}
-.row-card{background:#111;border:1px solid #262626;border-radius:16px;padding:14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
-.profit-box{background:#111;border:1px solid #262626;border-radius:16px;padding:14px;margin-top:10px}
-.green-box{background:rgba(34,197,94,0.08);border:1px solid #22c55e;border-radius:16px;padding:14px;margin-top:10px}
-.blue-box{background:rgba(59,130,246,0.08);border:1px solid #3b82f6;border-radius:16px;padding:14px;margin-top:10px}
-.btn-row{display:flex;gap:8px;margin-top:12px}
-.btn-row button{flex:1;padding:12px;border-radius:999px;border:none;font-weight:900;cursor:pointer}
-.list-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #262626;font-size:14px}
-#banner-0{background:#1e3a8a;color:#fff;text-align:center;padding:10px;border-radius:12px;font-weight:900}
-#banner-1{background:#14532d;color:#fff;text-align:center;padding:10px;border-radius:12px;font-weight:900;display:none}
-</style></head>
-<body>
-<div class="wrap">
-<div id="banner-0">0번 화면 - 승인대기중 - ?view=1 없이</div>
-<div id="banner-1">1번 화면 - 승인완료 - ?view=1</div>
-<div style="text-align:center;font-size:11px;color:#9ca3af;padding:8px"><a href="?" style="color:#93c5fd">0번 보기</a> · <a href="?view=1" style="color:#93c5fd">1번 보기</a> · <a href="?view=1&v=20261108" style="color:#93c5fd">1번 캐시버림</a></div>
-<div id="view-0"><div class="wrap">
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>매매확인</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0} body{background:#0a0a0a;color:#e5e5e5;font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;padding:14px 12px 28px}
+.wrap{max-width:430px;margin:0 auto} .top{background:#151515;border-radius:16px;padding:14px;border:1px solid #262626}
+.name{font-size:22px;font-weight:900} .acct{font-size:11px;color:#9ca3af;margin-top:2px} .copy{background:#123324;border:1px solid #22c55e;color:#86efac;font-size:11px;padding:4px 8px;border-radius:999px}
+.pill{font-size:12px;font-weight:800;padding:7px 12px;border-radius:999px} .pill-blue{background:#2563eb;color:#fff} .pill-yellow{background:#facc15;color:#111}
+.pending{color:#facc15;font-size:12px;font-weight:800;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px} .card{background:#151515;border:1px solid #262626;border-radius:16px;padding:13px}
+.label{font-size:11px;color:#9ca3af} .value{font-size:15px;font-weight:900;margin-top:6px}
+.yellow{background:rgba(250,204,21,0.15);border:1px solid #facc15;border-radius:16px;padding:13px;margin-top:12px;font-size:13px;line-height:1.5;color:#fde68a}
+.profit-box{background:#151515;border:1px solid #262626;border-radius:16px;padding:13px;margin-top:12px}
+.row-card{background:#151515;border:1px solid #262626;border-radius:16px;padding:13px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.switch{width:52px;height:28px;border-radius:999px;background:#22c55e;position:relative} .switch::after{content:"";position:absolute;right:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%}
+.switch.off{background:#374151} .switch.off::after{left:3px;right:auto}
+.green-box{border:1.5px solid #22c55e;border-radius:16px;padding:13px;margin-top:12px;background:#111}
+.blue-box{border:1.5px solid #3b82f6;border-radius:16px;padding:13px;margin-top:12px;background:#111}
+.btn-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px} .btn{padding:13px 6px;border-radius:12px;font-weight:900;font-size:14px;border:none}
+.btn-y{background:#facc15;color:#111} .btn-g{background:#1f2937;color:#fff} .btn-o{background:#111;color:#facc15;border:2px solid #facc15}
+</style></head><body><div class="wrap">
 <div class="top"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="name">김성택</div><div class="acct">7020-3101 &nbsp; <span class="copy">COPY_ADMIN</span></div></div><div style="display:flex;gap:6px"><span class="pill pill-blue">연결됨</span><span class="pill pill-yellow">매매중</span></div></div><div class="pending">승인대기중</div></div>
 <div class="grid2"><div class="card"><div class="label">현재 신호</div><div class="value">MNQ26 &nbsp; <span style="background:#262626;padding:2px 7px;border-radius:999px;font-size:12px">SELL 1</span></div><div style="font-size:11px;color:#9ca3af;margin-top:6px">0.05초 복제 / PC 항상 ON</div></div><div class="card"><div class="label" style="color:#facc15;font-weight:800">관리자 복제매매 ON</div><div class="value">매매중</div><div style="font-size:12px;color:#22c55e;margin-top:6px">● 정상 가동중</div></div></div>
 
@@ -37,7 +36,43 @@ body{background:#0a0a0a;color:#e5e5e5;font-family:system-ui,-apple-system,'Malgu
     <div id="apply-msg-0bun" style="font-size:12px;color:#86efac;margin-top:10px;display:none">신청이 전송되었습니다. 승인대기중입니다.</div>
   </div>
 </div>
-
+<script>
+function submitApply0Bun(){
+  var n=document.getElementById('apply-name-0bun').value.trim();
+  var p=document.getElementById('apply-phone-0bun').value.trim();
+  if(!n){ alert('이름을 입력하세요.'); return; }
+  if(!p){ alert('연락처(전화번호)를 입력하세요.'); return; }
+  try{
+    var data={name:n, phone:p, telegram_id: (window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user&&window.Telegram.WebApp.initDataUnsafe.user.id)||'', created_at:new Date().toISOString(), status:'pending'};
+    try{ localStorage.setItem('MNQ_APPLY_0BUN', JSON.stringify(data)); }catch(e){}
+    // Admin PC로 전송: nPoint에 pending으로 저장 시도 (실패해도 로컬에는 저장됨)
+    try{
+      fetch('https://api.npoint.io/04ac6b88e333695ed90b').then(function(r){return r.json();}).then(function(c){
+        try{ c.pending_users=c.pending_users||[]; c.pending_users.push(data); return fetch('https://api.npoint.io/04ac6b88e333695ed90b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)}); }catch(e){}
+      }).catch(function(){});
+    }catch(e){}
+  }catch(e){}
+  var m=document.getElementById('apply-msg-0bun'); if(m){ m.style.display='block'; m.textContent='신청이 전송되었습니다. 승인대기중입니다.'; }
+  // 신청 후 원래 화면으로 돌아오면 최상단 이름 아래 승인대기중 표시
+  try{
+    var pendingEls = document.querySelectorAll('.pending');
+    pendingEls.forEach(function(el){ el.textContent='승인대기중'; el.style.color='#facc15'; });
+  }catch(e){}
+  // 버튼 재클릭 방지 + 연한 색으로 변경 (새로고침 전까지)
+  try{
+    var btn=document.getElementById('btn-apply-0bun');
+    if(btn){
+      btn.disabled=true;
+      btn.style.pointerEvents='none';
+      btn.style.background='#fef3c7';
+      btn.style.color='#a8a29e';
+      btn.style.opacity='0.55';
+      btn.textContent='신청 완료 - 승인대기중';
+    }
+  }catch(e){}
+  setTimeout(function(){ document.getElementById('modal-apply-0bun').style.display='none'; }, 1200);
+}
+</script>
 <div class="profit-box"><div style="font-size:11px;color:#9ca3af">수익 현황</div><div style="font-size:28px;font-weight:900;margin-top:6px">$2,111,184</div><div style="font-size:12px;color:#22c55e;margin-top:4px">+60% · 관리자 +72.3% / 내 PC +27.8%</div></div>
 <div class="yellow">⚠ 1억 전에는 출금 하지 마십시오. 천오백으로 1년이면 1억 됩니다. 자본이 1억2천 이후에는 하루수익 2백~1천 목표로 합니다.</div>
 <div class="profit-box"><div style="font-weight:900">수익성 비교</div><div style="display:flex;gap:14px;align-items:center;margin-top:12px"><div style="width:74px;height:74px;border-radius:50%;border:8px solid #facc15;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="color:#22c55e;font-weight:900;font-size:16px">+54%</div><div style="font-size:11px;color:#9ca3af">수익</div></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:13px"><span><span style="color:#facc15">●</span> 관리자</span><span>72.3% &nbsp; <span style="background:#262626;padding:2px 6px;border-radius:999px;font-size:11px">0.05s</span></span></div><div style="height:8px;background:#1f2937;border-radius:999px;margin-top:6px;overflow:hidden"><div style="height:100%;width:72.3%;background:#facc15"></div></div><div style="display:flex;justify-content:space-between;font-size:13px;margin-top:10px"><span><span style="color:#22c55e">●</span> 내 PC</span><span>27.8%</span></div><div style="height:8px;background:#1f2937;border-radius:999px;margin-top:6px;overflow:hidden"><div style="height:100%;width:27.8%;background:#22c55e"></div></div></div></div></div>
@@ -47,7 +82,32 @@ body{background:#0a0a0a;color:#e5e5e5;font-family:system-ui,-apple-system,'Malgu
 <div class="blue-box" id="apply2-box" onclick="openCopyModal()"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:900">관리자 복제매매 신청하기 &nbsp; <span style="background:#262626;font-size:11px;padding:2px 6px;border-radius:999px">AUTO 0.05s</span></div><span style="color:#93c5fd">▶</span></div><div style="font-size:12px;color:#9ca3af;margin-top:8px;line-height:1.5">관리자 매매 신호를 0.05초에 자동 복제합니다. PC는 항상 켜져야 합니다. 15,000,000으로 1년이면 1억 됩니다.</div><div style="display:flex;gap:8px;margin-top:10px"><input value="1억 전 출금 금지 / 텔레그램 @mnq_signal_2026_bot" readonly onclick="event.stopPropagation()" style="flex:1;background:#1f2937;border:none;color:#e5e5e5;padding:10px;border-radius:999px;font-size:12px"><button onclick="event.stopPropagation(); openCopyModal()" style="background:#111;border:1px solid #22c55e;color:#86efac;padding:10px 14px;border-radius:999px;font-weight:800;cursor:pointer">신청하기</button></div><div style="font-size:11px;color:#93c5fd;margin-top:6px">클릭하면 복제매매 안내 / 신청 화면이 열립니다.</div></div>
 <div class="btn-row"><button class="btn btn-y">수익확인</button><button class="btn btn-g">초기화면</button><button class="btn btn-o">매매중지</button></div>
 </div>
-
+<script>
+function toggleExclusive(which){
+  var admin=document.getElementById('toggle-admin');
+  var mypc=document.getElementById('toggle-mypc');
+  var adminLabel=document.getElementById('toggle-admin-label');
+  var mypcLabel=document.getElementById('toggle-mypc-label');
+  var adminKnob=document.getElementById('toggle-admin-knob');
+  var mypcKnob=document.getElementById('toggle-mypc-knob');
+  if(which==='admin'){
+    // 관리자 ON, 내 PC OFF (상호 배타적)
+    admin.style.background='#22c55e'; admin.style.borderColor='#22c55e'; admin.style.boxShadow='0 0 8px rgba(34,197,94,0.5)'; admin.style.justifyContent='flex-end';
+    adminLabel.textContent='ON'; adminLabel.style.color='#fff'; adminLabel.style.left='8px'; adminLabel.style.right='auto';
+    mypc.style.background='#374151'; mypc.style.borderColor='#4b5563'; mypc.style.boxShadow='none'; mypc.style.justifyContent='flex-start';
+    mypcLabel.textContent='OFF'; mypcLabel.style.color='#9ca3af'; mypcLabel.style.right='8px'; mypcLabel.style.left='auto';
+  } else {
+    // 내 PC ON, 관리자 OFF (상호 배타적)
+    mypc.style.background='#22c55e'; mypc.style.borderColor='#22c55e'; mypc.style.boxShadow='0 0 8px rgba(34,197,94,0.5)'; mypc.style.justifyContent='flex-end';
+    mypcLabel.textContent='ON'; mypcLabel.style.color='#fff'; mypcLabel.style.left='8px'; mypcLabel.style.right='auto';
+    admin.style.background='#374151'; admin.style.borderColor='#4b5563'; admin.style.boxShadow='none'; admin.style.justifyContent='flex-start';
+    adminLabel.textContent='OFF'; adminLabel.style.color='#9ca3af'; adminLabel.style.right='8px'; adminLabel.style.left='auto';
+  }
+}
+function toggleResell(){ var d=document.getElementById('resell-detail'); if(d){ d.style.display = d.style.display==='none' ? 'block' : 'none'; } }
+function toggleApply2(){ var d=document.getElementById('apply2-detail'); if(d){ d.style.display = d.style.display==='none' ? 'block' : 'none'; } }
+function submitApply2(){ var m=document.getElementById('apply2-msg'); if(m){ m.style.display='block'; m.textContent='신청이 접수되었습니다. 관리자 승인 후 복제매매가 시작됩니다.'; } }
+</script>
 
 <!-- 재매수 가격 지정 모달 - 그림과 동일, 슬라이드바 포함 -->
 <div id="modal-resell" style="display:none;position:fixed;inset:0;background:#0a0a0a;z-index:9999;overflow-y:auto;padding:0">
@@ -103,94 +163,16 @@ body{background:#0a0a0a;color:#e5e5e5;font-family:system-ui,-apple-system,'Malgu
   </div>
   <div style="position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid #262626;padding:12px"><div style="max-width:430px;margin:0 auto;display:flex;gap:10px"><button onclick="closeCopyModal()" style="flex:1;background:#1f2937;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:900">닫기</button><button onclick="submitCopy()" style="flex:1;background:#facc15;color:#111;border:none;border-radius:12px;padding:14px;font-weight:900">복제매매 신청</button></div></div>
 </div>
-
-</div>
-<div id="view-1" style="display:none">
-<div class="wrap">
-  <!-- 상단 안내 문구 삭제 -->
-
-  <div class="top">
-    <div class="top-row">
-      <div>
-        <div class="name">김성택</div>
-        <div class="acct">7020-3101 &nbsp; <span class="copy">COPY_ADMIN</span></div>
-      </div>
-      <div style="display:flex;gap:6px"><span class="pill pill-blue">연결됨</span><span class="pill pill-yellow">매매중</span></div>
-    </div>
-    <div class="pending" style="color:#22c55e">승인완료</div>
-  </div>
-
-  <div class="grid2">
-    <div class="card"><div class="label">현재 신호</div><div class="value">MNQ26 &nbsp; <span style="background:#262626;padding:2px 7px;border-radius:999px;font-size:12px">SELL 1</span></div><div style="font-size:11px;color:#9ca3af;margin-top:6px">0.05초 복제 / PC 항상 ON</div></div>
-    <div class="card"><div class="label" style="color:#facc15;font-weight:800">관리자 복제매매 ON</div><div class="value">매매중</div><div style="font-size:12px;color:#22c55e;margin-top:6px">● 정상 가동중</div></div>
-  </div>
-  <div class="new-box">
-    <div class="new-title">NASDAQ 실시간 정보 <span>· 1번 화면 전용</span></div>
-    <div class="nasdaq-price">24,512.75 <em>▲ +0.42%</em></div>
-    <div class="nasdaq-sub">시가 대비 +0.42% · 시가 24,410.00 기준 · 예시 가격 (실시간 연동 전)</div>
-    <ul class="list">
-      <li><span>당일 최고가</span><b>24,680.00</b></li>
-      <li><span>당일 최저가</span><b>24,295.50</b></li>
-      <li><span>매매중 수량</span><b>1 계약</b></li>
-      <li><span>진입가</span><b>24,500.00 · MNQ26</b></li>
-      <li style="background:rgba(250,204,21,0.12);border-radius:8px;padding-left:8px;padding-right:8px"><span style="color:#facc15;font-weight:800">수익금 (수익률)</span><b class="profit" style="color:#facc15;font-size:15px">+$25.50 (+0.10%)</b></li>
-      <li><span>손실금 (%)</span><b class="loss">-$0.00 (0.00%)</b></li>
-    </ul>
-  </div>
-
-
-
-
-  <div class="row-card"><div><div style="font-weight:900">관리자 복제매매</div><div style="font-size:11px;color:#9ca3af;margin-top:3px">관리자 신호 0.05초 복제 · COPY_ADMIN</div></div><div class="switch"></div></div>
-  <div class="row-card"><div><div style="font-weight:900">내 PC로 매매</div><div style="font-size:11px;color:#9ca3af;margin-top:3px">관리자 휴식 시 개인PC 신호로 자동 전환 · MY_PC</div></div><div class="switch off"></div></div>
-  <div class="green-box">
-    <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-weight:900">재매수 가격 지정</span> <span style="background:#22c55e;color:#fff;font-size:11px;padding:2px 6px;border-radius:999px">NEW</span> <span style="background:#262626;font-size:11px;padding:2px 6px;border-radius:999px">6단계 가능</span></div><span style="border:1px solid #22c55e;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">+</span></div>
-    <div style="font-size:12px;color:#9ca3af;margin-top:8px">진입가 · 목표가 · 손절가 · 수량 설정 (솔라이드 지원)</div>
-    <div style="font-size:12px;margin-top:6px">진입가 24500 · 목표가 24650 (+150) · 손절가 24350 (-150) · 수량 1계약</div>
-  </div>
-
-  <div class="blue-box">
-    <div style="display:flex;justify-content:space-between"><div style="font-weight:900">관리자 복제매매 신청하기 &nbsp; <span style="background:#262626;font-size:11px;padding:2px 6px;border-radius:999px">AUTO 0.05s</span></div><span>▶</span></div>
-    <div style="font-size:12px;color:#9ca3af;margin-top:8px;line-height:1.5">관리자 매매 신호를 0.05초에 자동 복제합니다. PC는 항상 켜져야 합니다. 15,000,000으로 1년이면 1억 됩니다.</div>
-    <div style="display:flex;gap:8px;margin-top:10px"><input value="1억 전 출금 금지 / 텔레그램 @mnq_signal_2026_bot" style="flex:1;background:#1f2937;border:none;color:#e5e5e5;padding:10px;border-radius:999px;font-size:12px"><button style="background:#111;border:1px solid #22c55e;color:#86efac;padding:10px 14px;border-radius:999px;font-weight:800">신청하기</button></div>
-  </div>
-
-  <div class="btn-row"><button class="btn btn-y">수익확인</button><button class="btn btn-g">초기화면</button><button class="btn btn-o">매매중지</button></div>
-
-  <!-- 4번,5번,6번은 화면에 보이지 않음 - 내부 처리만 실행 -->
-  <div id="sec456-wrap" style="display:none !important" aria-hidden="true"></div>
-  
-  <!-- 하단 안내 문구 삭제 -->
-</div>
-</div>
-</div>
 <script>
-(function(){
-  var qs = location.search || "";
-  var is1 = qs.indexOf("view=1") !== -1;
-  // localStorage도 확인 (1번 강제)
-  try{ if(localStorage.getItem("MNQ_1BUN")==="1") is1=true; }catch(e){}
-  var v0=document.getElementById("view-0");
-  var v1=document.getElementById("view-1");
-  var b0=document.getElementById("banner-0");
-  var b1=document.getElementById("banner-1");
-  if(is1){ if(v0) v0.style.display="none"; if(v1) v1.style.display="block"; if(b0) b0.style.display="none"; if(b1) b1.style.display="block"; document.title="매매확인 - 1번"; }
-  else { if(v0) v0.style.display="block"; if(v1) v1.style.display="none"; if(b0) b0.style.display="block"; if(b1) b1.style.display="none"; document.title="매매확인 - 0번"; }
-  console.log("VIEW", is1 ? "1" : "0", qs);
-})();
-function toggleExclusive(which){ var admin=document.getElementById('toggle-admin'); var mypc=document.getElementById('toggle-mypc'); var al=document.getElementById('toggle-admin-label'); var ml=document.getElementById('toggle-mypc-label'); if(!admin||!mypc) return; if(which==='admin'){ admin.style.background='#22c55e'; admin.style.justifyContent='flex-end'; if(al){al.textContent='ON';} mypc.style.background='#374151'; mypc.style.justifyContent='flex-start'; if(ml){ml.textContent='OFF';} } else { mypc.style.background='#22c55e'; mypc.style.justifyContent='flex-end'; if(ml){ml.textContent='ON';} admin.style.background='#374151'; admin.style.justifyContent='flex-start'; if(al){al.textContent='OFF';} } }
-function openResellModal(){ var m=document.getElementById('modal-resell'); if(m) m.style.display='block'; }
-function closeResellModal(){ var m=document.getElementById('modal-resell'); if(m) m.style.display='none'; }
-function openCopyModal(){ var m=document.getElementById('modal-copy'); if(m) m.style.display='block'; }
-function closeCopyModal(){ var m=document.getElementById('modal-copy'); if(m) m.style.display='none'; }
-function toggleResell(){ var d=document.getElementById('resell-detail'); if(d) d.style.display=d.style.display==='none'?'block':'none'; }
-function toggleApply2(){ var d=document.getElementById('apply2-detail'); if(d) d.style.display=d.style.display==='none'?'block':'none'; }
-function submitApply2(){ var m=document.getElementById('apply2-msg'); if(m){m.style.display='block';} }
-function syncSlider(w){ var i=document.getElementById(w+'-input'); var s=document.getElementById(w+'-slider'); if(i&&s){s.value=i.value; updateProfit();} }
-function syncInput(w){ var i=document.getElementById(w+'-input'); var s=document.getElementById(w+'-slider'); if(i&&s){i.value=s.value; updateProfit();} }
-function updateProfit(){ try{ var e=parseFloat(document.getElementById('entry-input').value)||24500; var t=parseFloat(document.getElementById('target-input').value)||24650; var st=parseFloat(document.getElementById('stop-input').value)||24350; var q=parseFloat(document.getElementById('qty-input').value)||1; var pr=(t-e)*2*q; var lo=(st-e)*2*q; var pe=document.getElementById('profit-preview'); var le=document.getElementById('loss-preview'); if(pe) pe.textContent=(pr>=0?'+':'')+'$'+pr.toFixed(2); if(le) le.textContent=(lo>=0?'+':'')+'$'+lo.toFixed(2); }catch(e){} }
-function saveResell(){ alert('재매수 가격 설정이 저장되었습니다.'); closeResellModal(); }
-function selectTerm(b){ document.querySelectorAll('.copy-term').forEach(function(x){x.style.border='1px solid #262626';}); b.style.border='1.5px solid #facc15'; }
-function submitCopy(){ var ph=document.getElementById('copy-phone'); if(ph && !ph.value.trim()){alert('연락처를 입력하세요.'); return;} alert('복제매매 신청이 접수되었습니다.'); closeCopyModal(); }
+function openResellModal(){ document.getElementById('modal-resell').style.display='block'; }
+function closeResellModal(){ document.getElementById('modal-resell').style.display='none'; }
+function syncSlider(which){ var inp=document.getElementById(which+'-input'); var s=document.getElementById(which+'-slider'); if(inp&&s){ s.value=inp.value; updateProfit(); } }
+function syncInput(which){ var inp=document.getElementById(which+'-input'); var s=document.getElementById(which+'-slider'); if(inp&&s){ inp.value=s.value; updateProfit(); } }
+function updateProfit(){ try{ var e=parseFloat(document.getElementById('entry-input').value)||24500; var t=parseFloat(document.getElementById('target-input').value)||24650; var st=parseFloat(document.getElementById('stop-input').value)||24350; var q=parseFloat(document.getElementById('qty-input').value)||1; var prof=(t-e)*2*q; var loss=(st-e)*2*q; document.getElementById('profit-preview').textContent=(prof>=0?'+':'')+'$'+prof.toFixed(2); document.getElementById('loss-preview').textContent=(loss>=0?'+':'')+'$'+loss.toFixed(2); }catch(e){} }
+function saveResell(){ alert('재매수 가격 설정이 저장되었습니다. 진입 '+document.getElementById('entry-input').value+' · 목표 '+document.getElementById('target-input').value+' · 손절 '+document.getElementById('stop-input').value+' · 수량 '+document.getElementById('qty-input').value+'계약'); closeResellModal(); }
+function openCopyModal(){ document.getElementById('modal-copy').style.display='block'; }
+function closeCopyModal(){ document.getElementById('modal-copy').style.display='none'; }
+function selectTerm(btn){ document.querySelectorAll('.copy-term').forEach(function(b){ b.style.border='1px solid #262626'; b.style.background='#1a1a1a'; }); btn.style.border='1.5px solid #facc15'; btn.style.background='#1f2937'; }
+function submitCopy(){ var ph=document.getElementById('copy-phone').value.trim(); if(!ph){ alert('연락처를 입력하세요.'); return; } alert('복제매매 신청이 접수되었습니다. 관리자 승인 후 시작됩니다.'); closeCopyModal(); }
 </script>
 </body></html>
