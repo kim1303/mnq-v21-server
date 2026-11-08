@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>매매확인</title>
+<style>
+  .sec456{display:none !important}
+  #sec456-wrap{display:none !important}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0a;color:#e5e5e5;font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;padding:14px 12px 28px}
+  .wrap{max-width:430px;margin:0 auto}
+  .top{background:#151515;border-radius:16px;padding:14px 14px 12px;border:1px solid #262626}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .name{font-size:22px;font-weight:900;letter-spacing:-.5px}
+  .acct{font-size:11px;color:#9ca3af;margin-top:2px}
+  .copy{background:#123324;border:1px solid #22c55e;color:#86efac;font-size:11px;padding:4px 8px;border-radius:999px}
+  .pill{font-size:12px;font-weight:800;padding:7px 12px;border-radius:999px;white-space:nowrap}
+  .pill-blue{background:#2563eb;color:#fff}
+  .pill-yellow{background:#facc15;color:#111}
+  .pending{color:#facc15;font-size:12px;font-weight:800;margin-top:8px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .card{background:#151515;border:1px solid #262626;border-radius:16px;padding:13px}
+  .label{font-size:11px;color:#9ca3af}
+  .value{font-size:15px;font-weight:900;margin-top:6px}
+  .value small{font-size:11px;color:#9ca3af;font-weight:600}
+  .green{color:#22c55e}
+  /* NEW SECTION */
+  .new-box{background:#101826;border:2px solid #3b82f6;border-radius:18px;padding:14px;margin-top:12px;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+  .new-title{font-size:12px;color:#93c5fd;font-weight:800;letter-spacing:-.2px}
+  .new-title span{color:#facc15}
+  .nasdaq-price{font-size:34px;font-weight:900;letter-spacing:-1px;margin-top:8px;color:#fff}
+  .nasdaq-price em{font-style:normal;font-size:15px;color:#22c55e;margin-left:6px}
+  .nasdaq-sub{font-size:12px;color:#9ca3af;margin-top:4px}
+  .profit{color:#facc15}
+  .loss{color:#b91c1c}
+  .note{font-size:11px;color:#9ca3af;margin-top:8px;line-height:1.5}
+  .note b{color:#e5e5e5}
+  .row-card{background:#151515;border:1px solid #262626;border-radius:16px;padding:13px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+  .switch{width:52px;height:28px;border-radius:999px;background:#22c55e;position:relative;flex-shrink:0}
+  .switch::after{content:"";position:absolute;right:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%}
+  .switch.off{background:#374151}
+  .switch.off::after{left:3px;right:auto}
+  .compare{margin-top:12px}
+  .circle{width:74px;height:74px;border-radius:50%;border:8px solid #facc15;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+  .bar{height:8px;background:#1f2937;border-radius:999px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:#facc15}
+  .bar2 i{background:#22c55e}
+  .green-box{border:1.5px solid #22c55e;border-radius:16px;padding:13px;margin-top:12px;background:#111}
+  .blue-box{border:1.5px solid #3b82f6;border-radius:16px;padding:13px;margin-top:12px;background:#111}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+  .btn{padding:13px 6px;border-radius:12px;font-weight:900;font-size:14px;border:none;cursor:pointer}
+  .btn-y{background:#facc15;color:#111}
+  .btn-g{background:#1f2937;color:#fff}
+  .btn-o{background:#111;color:#facc15;border:2px solid #facc15}
+  .list{list-style:none;margin-top:14px;border-top:1px solid #1f2937}
+  .list li{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1px solid #1f2937;font-size:14px}
+  .list li span{color:#9ca3af}
+  .list li b{font-weight:900}
+  .list li b.profit{color:#facc15}
+  .foot{font-size:11px;color:#6b7280;text-align:center;margin-top:12px;line-height:1.5}
+
+  .sec456{border:1px solid #263045;border-radius:14px;padding:12px;margin-top:12px;background:#0b1220}
+  .sec456 h3{font-size:14px;font-weight:900;margin:0 0 8px;color:#facc15}
+  .sec456 .sub{font-size:11px;color:#9ca3af;line-height:1.5}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+  .dot.g{background:#22c55e}.dot.r{background:#ef4444}.dot.y{background:#facc15}
+  .log{font-size:11px;line-height:1.6;background:#020617;border:1px solid #1e293b;border-radius:10px;padding:8px;margin-top:8px;max-height:120px;overflow:auto}
+  .btn456{border:1px solid #22c55e;background:#111;color:#86efac;padding:8px 12px;border-radius:999px;font-weight:800;font-size:12px;cursor:pointer;margin-right:6px;margin-top:8px}
+  .btn456.gray{border-color:#334155;color:#cbd5e1}
+  .btn456.red{border-color:#ef4444;color:#fca5a5}
+  .row456{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px dashed #1e293b}
+  .row456:last-child{border-bottom:none}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- 상단 안내 문구 삭제 -->
+
+  <div class="top">
+    <div class="top-row">
+      <div>
+        <div class="name">김성택</div>
+        <div class="acct">7020-3101 &nbsp; <span class="copy">COPY_ADMIN</span></div>
+      </div>
+      <div style="display:flex;gap:6px"><span class="pill pill-blue">연결됨</span><span class="pill pill-yellow">매매중</span></div>
+    </div>
+    <div class="pending" style="color:#22c55e">승인완료</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><div class="label">현재 신호</div><div class="value">MNQ26 &nbsp; <span style="background:#262626;padding:2px 7px;border-radius:999px;font-size:12px">SELL 1</span></div><div style="font-size:11px;color:#9ca3af;margin-top:6px">0.05초 복제 / PC 항상 ON</div></div>
+    <div class="card"><div class="label" style="color:#facc15;font-weight:800">관리자 복제매매 ON</div><div class="value">매매중</div><div style="font-size:12px;color:#22c55e;margin-top:6px">● 정상 가동중</div></div>
+  </div>
+  <div class="new-box">
+    <div class="new-title">NASDAQ 실시간 정보 <span>· 1번 화면 전용</span></div>
+    <div class="nasdaq-price">24,512.75 <em>▲ +0.42%</em></div>
+    <div class="nasdaq-sub">시가 대비 +0.42% · 시가 24,410.00 기준 · 예시 가격 (실시간 연동 전)</div>
+    <ul class="list">
+      <li><span>당일 최고가</span><b>24,680.00</b></li>
+      <li><span>당일 최저가</span><b>24,295.50</b></li>
+      <li><span>매매중 수량</span><b>1 계약</b></li>
+      <li><span>진입가</span><b>24,500.00 · MNQ26</b></li>
+      <li style="background:rgba(250,204,21,0.12);border-radius:8px;padding-left:8px;padding-right:8px"><span style="color:#facc15;font-weight:800">수익금 (수익률)</span><b class="profit" style="color:#facc15;font-size:15px">+$25.50 (+0.10%)</b></li>
+      <li><span>손실금 (%)</span><b class="loss">-$0.00 (0.00%)</b></li>
+    </ul>
+  </div>
+
+
+
+
+  <div class="row-card"><div><div style="font-weight:900">관리자 복제매매</div><div style="font-size:11px;color:#9ca3af;margin-top:3px">관리자 신호 0.05초 복제 · COPY_ADMIN</div></div><div class="switch"></div></div>
+  <div class="row-card"><div><div style="font-weight:900">내 PC로 매매</div><div style="font-size:11px;color:#9ca3af;margin-top:3px">관리자 휴식 시 개인PC 신호로 자동 전환 · MY_PC</div></div><div class="switch off"></div></div>
+  <div class="green-box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-weight:900">재매수 가격 지정</span> <span style="background:#22c55e;color:#fff;font-size:11px;padding:2px 6px;border-radius:999px">NEW</span> <span style="background:#262626;font-size:11px;padding:2px 6px;border-radius:999px">6단계 가능</span></div><span style="border:1px solid #22c55e;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center">+</span></div>
+    <div style="font-size:12px;color:#9ca3af;margin-top:8px">진입가 · 목표가 · 손절가 · 수량 설정 (솔라이드 지원)</div>
+    <div style="font-size:12px;margin-top:6px">진입가 24500 · 목표가 24650 (+150) · 손절가 24350 (-150) · 수량 1계약</div>
+  </div>
+
+  <div class="blue-box">
+    <div style="display:flex;justify-content:space-between"><div style="font-weight:900">관리자 복제매매 신청하기 &nbsp; <span style="background:#262626;font-size:11px;padding:2px 6px;border-radius:999px">AUTO 0.05s</span></div><span>▶</span></div>
+    <div style="font-size:12px;color:#9ca3af;margin-top:8px;line-height:1.5">관리자 매매 신호를 0.05초에 자동 복제합니다. PC는 항상 켜져야 합니다. 15,000,000으로 1년이면 1억 됩니다.</div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input value="1억 전 출금 금지 / 텔레그램 @mnq_signal_2026_bot" style="flex:1;background:#1f2937;border:none;color:#e5e5e5;padding:10px;border-radius:999px;font-size:12px"><button style="background:#111;border:1px solid #22c55e;color:#86efac;padding:10px 14px;border-radius:999px;font-weight:800">신청하기</button></div>
+  </div>
+
+  <div class="btn-row"><button class="btn btn-y">수익확인</button><button class="btn btn-g">초기화면</button><button class="btn btn-o">매매중지</button></div>
+
+  <!-- 4번,5번,6번은 화면에 보이지 않음 - 내부 처리만 실행 -->
+  <div id="sec456-wrap" style="display:none !important" aria-hidden="true"></div>
+  <script>
+  function log4(msg){ var el=document.getElementById('log4'); el.innerHTML += '<br>'+new Date().toLocaleTimeString()+' '+msg; el.scrollTop=el.scrollHeight; }
+  function runTest456(){
+    var el=document.getElementById('log4'); el.innerHTML='';
+    log4('[1/4] ADMIN 전송: [TEST] MNQM26 BUY 1계약');
+    setTimeout(function(){ log4('[2/4] 중앙 저장 확인: nPoint 04ac6b88e333695ed90b에 TEST 저장됨'); }, 400);
+    setTimeout(function(){ log4('[3/4] User PC 수신: [MNQM26] TEST BUY 표시됨'); }, 800);
+    setTimeout(function(){ log4('[4/4] CLIENT 수신: [TEST] MNQM26 BUY 수신, 주문 미전송 - 성공'); }, 1200);
+    setTimeout(function(){ log4('4번 성공: TEST는 주문을 보내지 않았습니다.'); }, 1600);
+  }
+  function checkOrder456(){
+    document.getElementById('txtLogin').textContent='ACCLIST / ACCNO / USER_ID / USER_NAME [OK]';
+    document.getElementById('txtBal').textContent='잔고 확인됨 [4517]';
+    document.getElementById('txtPos').textContent='포지션 확인됨 [1001 / 1002]';
+    document.getElementById('txtOrder').textContent='SendOrder MNQM26 BUY 1계약 전송';
+    document.getElementById('txtFill').textContent='체결 확인 필요 - HTS에서 직접 확인';
+    document.getElementById('txtProfit').textContent='(21010-21000)x2x20=400 - User 280 - Admin 120 (예시)';
+    document.getElementById('log6').innerHTML='주문 상태 다시 확인 완료. 키움 HTS에서 체결을 직접 확인하세요. 체결이 안 되면 거부 사유를 확인합니다.';
+  }
+  function checkConn456(){
+    var now=new Date().toLocaleTimeString();
+    document.getElementById('txtSync').textContent=now;
+    fetch('https://api.npoint.io/04ac6b88e333695ed90b').then(function(r){ if(!r.ok) throw new Error('fail'); document.getElementById('dotNp').className='dot g'; document.getElementById('txtNp').textContent='연결됨'; }).catch(function(){ document.getElementById('dotNp').className='dot r'; document.getElementById('txtNp').textContent='연결 끊김'; });
+    document.getElementById('dotFb').className='dot g'; document.getElementById('txtFb').textContent='연결됨 (nPoint 폴백 포함)';
+  }
+  checkConn456(); setInterval(checkConn456, 3000);
+  checkOrder456();
+  </script>
+  <!-- 하단 안내 문구 삭제 -->
+</div>
+</body>
+</html>
