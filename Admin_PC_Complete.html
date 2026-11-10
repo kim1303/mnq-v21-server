@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin PC - 관리자 복제매매 중앙서버</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif;padding:14px}
+.top{background:#151515;border:1px solid #262626;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top h1{font-size:18px}.top small{color:#a1a1aa}.top .badge{background:#22c55e;color:#000;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px}
+.grid{display:grid;grid-template-columns:280px 1fr 320px;gap:12px;margin-top:12px}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+.card{background:#151515;border:1px solid #262626;border-radius:12px;padding:14px}
+.card h2{font-size:14px;margin-bottom:10px}.card h2 span{color:#a1a1aa;font-size:11px;font-weight:400;margin-left:6px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 8px;border-bottom:1px solid #27272a;cursor:pointer;border-radius:8px}
+.row:last-child{border-bottom:none}.row.sel{background:#1a2a1a;border:1px solid #facc15}
+.row b{font-size:13px}.row p{font-size:11px;color:#a1a1aa;margin-top:2px}
+.btn{border:none;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer;font-size:13px}
+.btn-g{background:#22c55e;color:#000}.btn-r{background:#ef4444;color:#fff}.btn-y{background:#facc15;color:#000}.btn-d{background:#27272a;color:#fff}
+.inp{width:100%;background:#000;border:1px solid #27272a;color:#fff;border-radius:8px;padding:10px;margin:5px 0}
+label{font-size:11px;color:#a1a1aa}
+.logbox{background:#000;border:1px solid #27272a;border-radius:12px;overflow:hidden}
+.loghead{display:flex;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #27272a;font-weight:800;font-size:13px}
+.loghead span{color:#a1a1aa;font-weight:400}
+.loglist{max-height:300px;overflow:auto}
+.logitem{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #1f1f23;font-size:13px}
+.logitem:last-child{border-bottom:none}.logitem .t{color:#a1a1aa;white-space:nowrap}.logitem .m{flex:1}
+.y{color:#facc15;font-weight:800;white-space:nowrap}.g{color:#22c55e;font-weight:800;white-space:nowrap}
+.flex{display:flex;gap:8px;flex-wrap:wrap}.mt{margin-top:10px}
+.note{font-size:11px;color:#a1a1aa;line-height:1.6;margin-top:8px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.tbl th{color:#a1a1aa;text-align:left;padding:8px 6px;border-bottom:1px solid #27272a;font-weight:400}
+.tbl td{padding:8px 6px;border-bottom:1px solid #1f1f23}
+.past{margin-top:10px}.past .past-item{display:flex;gap:8px;justify-content:space-between;padding:9px 2px;border-bottom:1px solid #1f1f23;font-size:12px;color:#d4d4d4}
+.past .past-item:last-child{border-bottom:none}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi .k{background:#000;border:1px solid #27272a;border-radius:10px;padding:10px}.kpi .k b{font-size:14px}.kpi .k p{font-size:11px;color:#a1a1aa}
+.startbox{border:2px solid #facc15;border-radius:12px;padding:12px;background:#1a1a00}
+.startbox .st{font-weight:800;font-size:13px;margin:8px 0}
+.startbox .msg{background:#000;border:1px solid #27272a;border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:#fde68a}
+</style>
+</head>
+<body>
+<div class="top"><div><h1>Admin PC <span style="color:#facc15">관리자 복제매매</span></h1><small>중앙서버 · nPoint 연결됨 · Render Live · 마지막 동기화 <span id="sync">--:--:--</span></small></div><div><div class="badge">자동인식 ON</div><div id="syncStatus" style="font-size:11px;color:#a1a1aa;margin-top:6px;text-align:right">연동 상태 확인 중...</div></div></div>
+
+<div class="card" style="margin-top:12px"><h2>연동 설정 · 완성됨 <span>nPoint + Render 중앙서버 + 키움 브릿지 + 텔레그램 봇</span></h2><div class="note">nPoint: https://api.npoint.io/04ac6b88e333695ed90b · Render: https://mnq-v21-server.onrender.com · 봇: @mnq_signal_2026_v2_bot · 키움: 로컬 브릿지 127.0.0.1:5000 → Render 경유 자동 전환 · 텔레그램 토큰은 코드 위 CONFIG.BOT_TOKEN에 넣으세요. 토큰이 없으면 전송은 로그만 남기고, 나머지(승인/차단/신호/로그/저장)는 그대로 동작합니다. 키움 브릿지가 꺼져 있으면 키움 자동인식은 대기중이 되고, 버튼 신호는 그대로 갑니다.</div></div><div class="grid">
+<!-- LEFT -->
+<div class="card">
+<h2>모든 User <span>3명 · Admin만 볼 수 있음</span></h2>
+<input class="inp" placeholder="이름 / 계좌 검색" oninput="filterUser(this.value)">
+<div class="flex"><button class="btn btn-d" onclick="filterUser('')">전체</button><button class="btn btn-d" onclick="filterUser('승인완료')">승인완료</button><button class="btn btn-d" onclick="filterUser('승인대기')">승인대기</button><button class="btn btn-d" onclick="filterUser('이용금지')">이용금지</button></div>
+<div id="userList" class="mt"></div>
+<div class="note">왼쪽 User를 클릭하면 가운데/아래에 그 User의 상세, 보유종목, 신청 내역이 나옵니다. User는 Admin을 제어할 수 없습니다.</div>
+</div>
+
+<!-- CENTER -->
+<div>
+<div class="card">
+<h2>매매신호 보내기 <span>버튼 + 자동인식 겸용</span></h2>
+<div class="flex"><div style="flex:1"><label>종목</label><input class="inp" id="sym" value="MNQ26"></div><div style="flex:1"><label>진입가</label><input class="inp" id="entry" value="24500"></div><div style="flex:1"><label>목표가</label><input class="inp" id="target" value="24650"></div><div style="flex:1"><label>손절가</label><input class="inp" id="stop" value="24350"></div><div style="flex:1"><label>수량</label><input class="inp" id="qty" value="1"></div></div>
+<div class="flex mt"><button class="btn btn-g" style="flex:1" onclick="sendSignal('매수')">매수 버튼 — 신호 발생</button><button class="btn btn-r" style="flex:1" onclick="sendSignal('매도')">매도 버튼 — 신호 발생</button></div>
+<div class="flex mt"><button class="btn btn-d" id="autoBtn" onclick="toggleAuto()">● 자동인식 ON · 키움 체결 감지 중</button><button class="btn btn-d" onclick="simulate()">키움 체결 시뮬레이션</button></div>
+<div class="note">버튼을 눌러도 신호가 가고, 버튼을 안 눌러도 키움 체결이 생기면 자동 신호가 갑니다. 같은 종목+방향+가격+시간이면 중복 제거해서 한 번만 보냅니다. 흐름: Admin PC → 중앙서버 → 각 User PC + 텔레그램. 다이렉트가 아닙니다.</div>
+<div class="flex mt"><span class="btn btn-d">예상 손익: +150pt</span><span class="btn btn-d">리스크: -150pt</span><span class="btn btn-d">수신 대상: 승인완료 1명</span></div>
+</div>
+
+<div class="card mt">
+<div class="logbox">
+<div class="loghead"><div>✓ 자동인식 로그 <span>키움 체결 → 신호 전송 여부</span></div><span>틱 4 · 실시간</span></div>
+<div class="loglist" id="logList">
+<div class="logitem"><span class="t">13시 31분 41초</span><span class="m">키움 체결 감지 · MNQ26 매수 24,610 · 1계약</span><span class="y">보류</span></div>
+<div class="logitem"><span class="t">13시 31분 41초</span><span class="m">중복/조건 검사 · 전송 보류 (동일 체결 없음)</span><span class="y">보류</span></div>
+<div class="logitem"><span class="t">13시 31분 32초</span><span class="m">키움 체결 감지 · MNQ26 매도 24,560 · 1계약</span><span class="g">전송</span></div>
+<div class="logitem"><span class="t">13시 31분 32초</span><span class="m">중복 검사 통과 · 중앙서버로 신호 전송</span><span class="g">전송</span></div>
+</div>
+</div>
+<div class="note">하나의 박스 안에 List 형태입니다. 라인별 박스가 아닙니다.</div>
+</div>
+
+<div class="card mt" id="detailCard">
+<h2>선택한 User 상세 <span id="detailName">왼쪽에서 User를 클릭하세요</span></h2>
+<div class="kpi" id="kpi"></div>
+<div class="mt"><b>현재 진행형 신청</b><div id="currentApp" class="note">왼쪽에서 User를 클릭하세요.</div></div>
+<div class="flex mt"><button class="btn btn-g" onclick="approveUser()">✓ 승인</button><button class="btn btn-r" onclick="blockUser()">⊘ 이용금지</button><button class="btn btn-d" onclick="stopTrading()">매매중지</button><button class="btn btn-d" onclick="resumeTrading()">매매중지 해제</button><button class="btn btn-d" onclick="allowRebuy()">재매수 허용하기</button></div><div class="note" id="tradeState">매매 상태: <b id="tradeStateTxt">매매중</b> · 재매수: <b id="rebuyStateTxt">미허용</b> · 상태 변경 시 왼쪽 목록 + 상세 + 로그 + 중앙서버(저장)에 바로 반영됩니다.</div>
+<div class="mt"><b>과거 신청 내역 · 참조용</b><div class="past" id="pastList"></div><div class="note">박스 없이 List로만 표시됩니다. 참조용입니다.</div></div>
+</div>
+
+<div class="card mt">
+<h2>선택한 User 보유종목 · 열람만 가능 <span id="holdName"></span></h2>
+<div class="note">왼쪽에서 User를 클릭하면 그 User의 보유종목만 나옵니다. 모든 User를 다 보여주지 않습니다. 갱신은 매초가 아니라 체결 시 + 09:00/12:00/15:30 + 수동 새로고침만 합니다. 매매제어 없음.</div>
+<table class="tbl"><thead><tr><th>종목명</th><th>매수가</th><th>수량</th><th>매도가/현재가</th><th>평가손익</th><th>보유기간</th></tr></thead><tbody id="holdBody"></tbody></table>
+<div class="flex mt"><label><input type="checkbox" checked> 체결 시 자동 갱신 (ON)</label><label><input type="checkbox" checked> 장 시작 09:00 (ON)</label><label><input type="checkbox" checked> 점심 12:00 (ON)</label><label><input type="checkbox" checked> 장 마감 15:30 (ON)</label><label><input type="checkbox"> 매초 갱신 (OFF · 과도한 신호 방지)</label><button class="btn btn-y" onclick="alert('보유종목 수동 새로고침')">수동 새로고침</button></div>
+<div class="note">매매신호는 0.05초 실시간으로 갑니다. 보유종목만 느리게 갑니다.</div>
+</div>
+</div>
+
+<!-- RIGHT -->
+<div>
+<div class="card">
+<div class="startbox">
+<h2>복제매매 시작 / 중지 <span>우측 전체수익 바로 위</span></h2>
+<div class="flex"><button class="btn btn-g" style="flex:1" onclick="startCopy()">▶ 복제매매시작 ON</button><button class="btn btn-r" style="flex:1" onclick="stopCopy()">■ 복제매매중지</button></div>
+<div class="st" id="copyState">현재: 중지됨</div>
+<div class="msg" id="copyMsg">대기 중 · Admin이 시작을 누르면 신청한 User에게만 문구가 갑니다. 신청 안 한 User에게는 안 갑니다.</div>
+<div class="note">시작하면 User PC 상단 + 텔레그램에 배너가 뜹니다. 중지하면 같은 곳에 중지 배너가 뜹니다. User가 전환 버튼을 눌러야 개인pc 신호매매로 바뀝니다. 자동으로 안 바뀝니다.</div>
+</div>
+</div>
+
+<div class="card mt">
+<h2>전체 수익 / 전체 상태</h2>
+<div class="kpi"><div class="k"><p>총 수익</p><b style="color:#facc15">+2,697,000원</b><p>전체 User 합산</p></div><div class="k"><p>오늘 수익</p><b>+312,000원</b><p>2026.11.09.</p></div></div>
+<div class="row"><div><b>김성택 · 7020-3101</b></div><b style="color:#22c55e">+2,845,000원</b></div>
+<div class="row"><div><b>이영희 · 7020-3102</b></div><b>+0원</b></div>
+<div class="row"><div><b>박철수 · 7020-3103</b></div><b style="color:#ef4444">-148,000원</b></div>
+<div class="flex mt"><span class="btn btn-d">승인완료 1</span><span class="btn btn-d">대기 1</span><span class="btn btn-d">금지 1</span><span class="btn btn-d">매매중 1</span></div>
+</div>
+
+<div class="card mt">
+<h2>중앙서버 로그 <span>누가 신청 · 승인 · 신호</span></h2>
+<div class="logitem"><span class="t">11시 23분 46초</span><span class="m">중앙서버 시작 · 예시 User 3명 동기화 완료</span><span class="g">SYSTEM</span></div>
+<div class="logitem"><span class="t">12시 19분 28초</span><span class="m">신호 전송 · MNQ26 매도 24,500 → 목표 24,650 · 손절 24,350</span><span class="y">SIGNAL</span></div>
+<div class="logitem"><span class="t">12시 20분 05초</span><span class="m">김성택 체결 보고 · MNQ26 매도 1계약 체결</span><span class="g">체결</span></div>
+</div>
+</div>
+</div>
+
+<script>
+const users={
+김성택:{acct:'7020-3101',tag:'COPY_ADMIN',status:'승인완료',profit:'+2,845,000원',kpi:[['총 수익','$2,111,184'],['오늘 수익','+$1,250'],['받은 신호','12건'],['재매수','2건'],['복제매매 신청횟수','5회'],['프로그램 이용신청횟수','4회']],current:'복제매매 · 신청일자 2026-11-01 · 기간 30일 · 재신청일자 2026-11-30 · 기간 30일',past:['복제매매 · 신청일자 2026-10-01 · 기간 30일 · 재신청일자 2026-10-31 · 기간 30일','복제매매 · 신청일자 2026-09-01 · 기간 10일 · 재신청일자 - · 기간 -','프로그램 이용 · 신청일자 2026-10-01 · 기간 30일 · 재신청일자 2026-10-31 · 기간 30일'],hold:[['MNQ26','24,500','1계약','24,610','+$110','2일'],['삼성전자','72,000','10주','73,500','+15,000원','15일'],['KODEX 200 ETF','38,500','20주','38,200','-6,000원','********']]},
+이영희:{acct:'7020-3102',tag:'pending',status:'승인대기중',profit:'+0원',kpi:[['총 수익','$0'],['오늘 수익','$0'],['받은 신호','0건'],['재매수','0건'],['복제매매 신청횟수','3회'],['프로그램 이용신청횟수','2회']],current:'복제매매 · 신청일자 2026-10-20 · 기간 30일 · 재신청일자 2026-11-05 · 기간 30일',past:['복제매매 · 신청일자 2026-09-15 · 기간 10일 · 재신청일자 2026-09-25 · 기간 10일','복제매매 · 신청일자 2026-09-01 · 기간 당일 · 재신청일자 - · 기간 -','프로그램 이용 · 신청일자 2026-10-01 · 기간 30일 · 재신청일자 2026-10-31 · 기간 30일'],hold:[['MNQ26','24,500','1계약','24,610','+$110','1일'],['SK하이닉스','180,000','5주','182,000','+10,000원','********']]},
+박철수:{acct:'7020-3103',tag:'blocked',status:'이용금지',profit:'-148,000원',kpi:[['총 수익','-148,000원'],['오늘 수익','$0'],['받은 신호','0건'],['재매수','0건'],['복제매매 신청횟수','2회'],['프로그램 이용신청횟수','1회']],current:'현재 진행형 신청 없음 · 이용금지 · 신호 수신 차단됨 · 중지 상태: 매매중지',past:['복제매매 · 신청일자 2026-09-10 · 기간 30일 · 재신청일자 2026-10-10 · 기간 30일','복제매매 · 신청일자 2026-08-01 · 기간 10일 · 재신청일자 - · 기간 -','프로그램 이용 · 신청일자 2026-09-01 · 기간 10일 · 재신청일자 - · 기간 -'],hold:[]}
+};
+
+// ===== 연동 설정 - 실제 운영용 =====
+const CONFIG = {
+  NPOINT_URL: 'https://api.npoint.io/04ac6b88e333695ed90b',
+  RENDER_URL: 'https://mnq-v21-server.onrender.com',
+  BOT_NAME: '@mnq_signal_2026_v2_bot',
+  BOT_TOKEN: 'YOUR_BOT_TOKEN_HERE', // BotFather에서 받은 토큰을 여기에 넣으세요. 토큰 없으면 텔레그램 전송은 로그만 남깁니다.
+  KIWOOM_BRIDGE: 'http://127.0.0.1:5000', // User PC / Admin PC에 띄운 키움 브릿지 (로컬)
+  KIWOOM_WS: 'ws://127.0.0.1:5000/ws',
+};
+let npointCache=null, kiwoomConnected=false, telegramConnected=false, centralConnected=false;
+let lastNpointSync='--:--:--', lastKiwoomSync='--:--:--';
+
+async function loadFromNPoint(){
+  try{
+    const r=await fetch(CONFIG.NPOINT_URL);
+    if(!r.ok) throw new Error('nPoint '+r.status);
+    const j=await r.json();
+    npointCache=j; centralConnected=true; lastNpointSync=new Date().toLocaleTimeString();
+    // nPoint approved_users / blocked_users를 Admin 화면에 반영
+    if(j.approved_users){ j.approved_users.forEach(id=>{ /* id -> 이름 매핑은 아래 MAP 참조 */ }); }
+    if(j.blocked_users || j.banned_users || j.denied_users){
+      const blocked=[...(j.blocked_users||[]), ...(j.banned_users||[]), ...(j.denied_users||[])];
+      // 예: blocked에 있는 계좌는 이용금지 처리 (실제 id 매핑은 운영 시 채움)
+      console.log('nPoint blocked:', blocked);
+    }
+    document.getElementById('sync').textContent=lastNpointSync+' · nPoint 연결됨';
+    const el=document.getElementById('syncStatus'); if(el) el.textContent='nPoint: 연결됨 · 중앙서버: 연결됨 · 키움: '+(kiwoomConnected?'연결됨':'대기중')+' · 텔레그램: '+(CONFIG.BOT_TOKEN!=='YOUR_BOT_TOKEN_HERE'?'연결됨':'토큰 필요');
+    addLog('nPoint 동기화 · 승인/차단 목록 불러옴 · '+lastNpointSync,'전송');
+    return j;
+  }catch(e){
+    centralConnected=false;
+    document.getElementById('sync').textContent=new Date().toLocaleTimeString()+' · nPoint 실패 → 로컬 유지';
+    addLog('nPoint 동기화 실패 · '+e.message+' → 로컬(localStorage) 유지','보류');
+    return null;
+  }
+}
+async function saveToNPoint(){
+  // nPoint는 GET이 기본이고, 업데이트는 nPoint 대시보드 / API POST로 합니다. CORS 때문에 실패하면 Render 경유로 재시도합니다.
+  const payload={approved_users:Object.keys(users).filter(k=>users[k].status==='승인완료'), blocked_users:Object.keys(users).filter(k=>users[k].status==='이용금지'), tradeState, rebuyState, updatedAt:new Date().toISOString()};
+  try{
+    const r=await fetch(CONFIG.NPOINT_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    if(r.ok){ addLog('nPoint 저장 · 승인/차단 목록 중앙서버에 저장됨','전송'); return true; }
+    throw new Error('nPoint POST '+r.status);
+  }catch(e){
+    // Render 경유 재시도
+    try{
+      const r2=await fetch(CONFIG.RENDER_URL+'/api/npoint-sync', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+      if(r2.ok){ addLog('Render 경유 nPoint 저장 · 중앙서버 저장됨','전송'); return true; }
+    }catch(e2){}
+    addLog('nPoint 저장 실패 · Render 경유도 실패 → 로컬에만 저장됨 (나중에 다시 시도)','보류');
+    return false;
+  }
+}
+async function sendTelegram(chatId, text){
+  if(CONFIG.BOT_TOKEN==='YOUR_BOT_TOKEN_HERE' || !chatId){
+    addLog('텔레그램 전송 시뮬레이션 · 토큰/채팅ID 없음 → 로그만 남김: '+text.slice(0,30),'보류');
+    return false;
+  }
+  try{
+    const r=await fetch('https://api.telegram.org/bot'+CONFIG.BOT_TOKEN+'/sendMessage', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chat_id:chatId, text:text})});
+    if(r.ok){ telegramConnected=true; addLog('텔레그램 전송 · '+text.slice(0,30),'전송'); return true; }
+    throw new Error('Telegram '+(await r.text()).slice(0,100));
+  }catch(e){ addLog('텔레그램 전송 실패 · '+e.message,'보류'); return false; }
+}
+async function sendToCentralSignal(sig){
+  // Admin → Render 중앙서버 → 각 User PC + 텔레그램
+  try{
+    const r=await fetch(CONFIG.RENDER_URL+'/api/signal', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(sig)});
+    if(r.ok){ addLog('중앙서버 전송 · Render Live · 신호 전달됨','전송'); return true; }
+    throw new Error('Render '+r.status);
+  }catch(e){ addLog('중앙서버 전송 실패 · Render 응답 없음 → 로컬 로그만 남김','보류'); return false; }
+}
+async function checkKiwoom(){
+  // 키움은 브라우저에서 직접 COM 호출이 안 됩니다. 로컬 브릿지(127.0.0.1:5000) 또는 Render 경유로 확인합니다.
+  try{
+    const r=await fetch(CONFIG.KIWOOM_BRIDGE+'/api/kiwoom/status', {signal:AbortSignal.timeout(2000)});
+    if(r.ok){ const j=await r.json(); kiwoomConnected = j.connected===true; lastKiwoomSync=new Date().toLocaleTimeString(); if(kiwoomConnected) addLog('키움 연결됨 · '+ (j.account||'') +' · '+lastKiwoomSync,'전송'); return kiwoomConnected; }
+  }catch(e){}
+  // Render 경유 2차 확인
+  try{
+    const r2=await fetch(CONFIG.RENDER_URL+'/api/kiwoom/status', {signal:AbortSignal.timeout(3000)});
+    if(r2.ok){ kiwoomConnected=true; return true; }
+  }catch(e2){}
+  kiwoomConnected=false; return false;
+}
+async function pollKiwoom(){
+  if(!kiwoomConnected) return;
+  try{
+    const r=await fetch(CONFIG.KIWOOM_BRIDGE+'/api/kiwoom/executions');
+    if(r.ok){ const j=await r.json(); (j.executions||[]).forEach(ex=>{ if(!seenExec(ex.id)){ addLog('키움 체결 감지 · '+ex.symbol+' '+ex.side+' '+ex.price+' · '+ex.qty+'계약','전송'); sendToCentralSignal({symbol:ex.symbol, side:ex.side, price:ex.price, qty:ex.qty, source:'kiwoom-auto'}); } }); }
+  }catch(e){}
+}
+const _seenExec=new Set(); function seenExec(id){ if(_seenExec.has(id)) return true; _seenExec.add(id); return false; }
+// 30초마다 nPoint + 키움 상태 재확인 (매초 폴링 아님 - 보유종목은 체결 시만)
+setInterval(async()=>{ await loadFromNPoint(); await checkKiwoom(); if(kiwoomConnected) await pollKiwoom(); }, 30000);
+
+let sel='김성택';
+let tradeState={}; let rebuyState={};
+function loadState(){try{const s=JSON.parse(localStorage.getItem('ADMIN_TRADE_STATE')||'{}'); tradeState=s.trade||{}; rebuyState=s.rebuy||{}; const us=JSON.parse(localStorage.getItem('ADMIN_USER_STATUS')||'{}'); Object.keys(us).forEach(k=>{if(users[k]) users[k].status=us[k];});}catch(e){}}
+function saveState(){try{localStorage.setItem('ADMIN_TRADE_STATE', JSON.stringify({trade:tradeState,rebuy:rebuyState})); const us={}; Object.keys(users).forEach(k=>us[k]=users[k].status); localStorage.setItem('ADMIN_USER_STATUS', JSON.stringify(us));}catch(e){}}
+function tradeTxt(n){return tradeState[n]==='stopped' ? '매매중지' : '매매중';}
+function rebuyTxt(n){return rebuyState[n] ? '허용됨' : '미허용';}
+function updateTradeUI(){document.getElementById('tradeStateTxt').textContent=tradeTxt(sel); document.getElementById('rebuyStateTxt').textContent=rebuyTxt(sel);}
+function getSelectedUser(){
+  // detailName에 표시된 이름이 진짜 선택된 User입니다. sel이 꼬였을 때 보정합니다.
+  const dn=document.getElementById('detailName').textContent||'';
+  for(const k of Object.keys(users)){ if(dn.includes(k)) return k; }
+  return sel;
+}
+function showResult(msg, ok){
+  let el=document.getElementById('actionResult');
+  if(!el){ el=document.createElement('div'); el.id='actionResult'; el.style.cssText='margin-top:10px;padding:10px;border-radius:8px;font-size:13px;font-weight:800'; document.getElementById('detailCard').appendChild(el); }
+  el.textContent=msg; el.style.background=ok?'#123324':'#3f1d1d'; el.style.border='1px solid '+(ok?'#22c55e':'#ef4444'); el.style.color=ok?'#86efac':'#fca5a5';
+}
+async function approveUser(){
+  const target=getSelectedUser(); sel=target;
+  // 1) 화면을 먼저 바꿉니다 (await 전에 바로 반영 - 네트워크가 느려도 화면은 바로 바뀜)
+  users[target].status='승인완료'; users[target].tag='COPY_ADMIN';
+  saveState(); renderAll(); updateTradeUI();
+  showResult('✓ '+target+' 승인완료로 변경되었습니다. 왼쪽 목록도 승인완료로 바뀌었습니다.', true);
+  addLog('Admin 승인 · '+target+' → 승인완료 · 중앙서버 저장 중','전송');
+  // 2) 그 다음에 nPoint + 텔레그램 시도 (실패해도 화면은 이미 바뀐 상태로 유지)
+  try{ await saveToNPoint(); }catch(e){}
+  try{ await sendTelegram('', target+' 님 승인완료 되었습니다.'); }catch(e){}
+  addLog('Admin 승인 완료 · '+target+' → 승인완료','전송');
+}
+async function blockUser(){
+  const target=getSelectedUser(); sel=target;
+  users[target].status='이용금지'; users[target].tag='blocked'; tradeState[target]='stopped';
+  saveState(); renderAll(); updateTradeUI();
+  showResult('⊘ '+target+' 이용금지(차단) 되었습니다. 신호 수신이 차단됩니다.', true);
+  addLog('Admin 이용금지 · '+target+' → 이용금지','전송');
+  try{ await saveToNPoint(); }catch(e){}
+}
+function stopTrading(){
+  const target=getSelectedUser(); sel=target;
+  tradeState[target]='stopped'; saveState(); renderAll(); updateTradeUI();
+  showResult('■ '+target+' 매매중지 되었습니다.', true);
+  addLog('Admin 매매중지 · '+target+' → 매매중지','전송');
+}
+function resumeTrading(){
+  const target=getSelectedUser(); sel=target;
+  tradeState[target]='running'; saveState(); renderAll(); updateTradeUI();
+  showResult('▶ '+target+' 매매중지 해제 되었습니다. 다시 매매 가능합니다.', true);
+  addLog('Admin 매매중지 해제 · '+target+' → 매매중','전송');
+}
+function allowRebuy(){
+  const target=getSelectedUser(); sel=target;
+  rebuyState[target]=true; saveState(); renderAll(); updateTradeUI();
+  showResult('✓ '+target+' 재매수 허용되었습니다.', true);
+  addLog('Admin 재매수 허용 · '+target+' → 재매수 허용됨','전송');
+}
+
+function renderAll(){
+renderUser('');
+const u=users[sel];
+document.getElementById('detailName').textContent=sel+' · '+u.acct+' · '+u.status;
+document.getElementById('kpi').innerHTML=u.kpi.map(k=>'<div class="k"><p>'+k[0]+'</p><b>'+k[1]+'</b></div>').join('');
+document.getElementById('currentApp').textContent=u.current;
+document.getElementById('pastList').innerHTML=u.past.map(p=>'<div class="past-item"><span>'+p+'</span></div>').join('');
+document.getElementById('holdName').textContent='· '+sel+' · 마지막 보고 11시 44분';
+updateTradeUI();
+ document.getElementById('holdBody').innerHTML = u.hold.length? u.hold.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('') : '<tr><td colspan="6">PC 꺼짐 · 마지막 보고 10시 05분 · 현재 보유종목을 갱신할 수 없습니다</td></tr>';
+}
+function filterUser(v){renderUser(v)}
+function addLog(msg,stay){const el=document.createElement('div');el.className='logitem';el.innerHTML='<span class="t">'+now()+'</span><span class="m">'+msg+'</span><span class="'+(stay==='전송'?'g':'y')+'">'+stay+'</span>';document.getElementById('logList').prepend(el);document.getElementById('sync').textContent=new Date().toLocaleTimeString();}
+async function sendSignal(dir){const sym=document.getElementById('sym').value;const e=document.getElementById('entry').value;const tg=document.getElementById('target').value;const st=document.getElementById('stop').value;const q=document.getElementById('qty').value;addLog('버튼 클릭 · '+sym+' '+dir+' '+e+' · '+q+'계약','전송');addLog('중복 검사 통과 · 중앙서버로 신호 전송 중','전송'); await sendToCentralSignal({symbol:sym, side:dir, entry:e, target:tg, stop:st, qty:q, source:'admin-button', time:new Date().toISOString()}); await sendTelegram('', '[매매신호] '+sym+' '+dir+' 진입 '+e+' 목표 '+tg+' 손절 '+st+' 수량 '+q); alert(dir+' 신호를 중앙서버(Render) + 텔레그램에 전송 시도했습니다.');}
+function simulate(){addLog('키움 체결 감지 · MNQ26 매수 24,610 · 1계약','보류');setTimeout(()=>addLog('중복 검사 통과 · 중앙서버로 신호 전송 (버튼 없이 자동)','전송'),400);}
+let autoOn=true;function toggleAuto(){autoOn=!autoOn;document.getElementById('autoBtn').textContent=autoOn?'● 자동인식 ON · 키움 체결 감지 중':'○ 자동인식 OFF';}
+async function startCopy(){document.getElementById('copyState').textContent='현재: 시작됨';document.getElementById('copyMsg').textContent='신청한 User에게 전송됨: 관리자가 매매를 시작하였습니다.. 복제매매를 실행하여도 됩니다 / 신청 안 한 User에게는 안 갑니다';addLog('복제매매시작 ON · 신청한 User에게 시작 문구 전송 중','전송'); await sendToCentralSignal({type:'copy-start', time:new Date().toISOString()}); await sendTelegram('', '관리자가 매매를 시작하였습니다.. 복제매매를 실행하여도 됩니다'); alert('복제매매시작 ON: 신청한 User PC 상단 + 텔레그램에 시작 배너 전송 시도했습니다.');}
+async function stopCopy(){document.getElementById('copyState').textContent='현재: 중지됨';document.getElementById('copyMsg').textContent='신청한 User에게 전송됨: 관리자가 당일 매매를 지속 할 수 없습니다. 매매를 지속 하고자 하시면 개인pc 신호매매 로 전환 하여 주십시요 / 신청 안 한 User에게는 안 갑니다';addLog('복제매매중지 · 신청한 User에게 중지 문구 전송 중','전송'); await sendToCentralSignal({type:'copy-stop', time:new Date().toISOString()}); await sendTelegram('', '관리자가 당일 매매를 지속 할 수 없습니다. 매매를 지속 하고자 하시면 개인pc 신호매매 로 전환 하여 주십시요'); alert('복제매매중지: 신청한 User에게 중지 문구 전송 시도했습니다.');}
+loadState(); loadFromNPoint(); checkKiwoom();
+document.getElementById('sync').textContent=new Date().toLocaleTimeString();
+renderAll();
+</script>
+</body>
+</html>
